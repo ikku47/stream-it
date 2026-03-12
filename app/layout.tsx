@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bebas_Neue, Outfit, JetBrains_Mono } from "next/font/google"
+
+const display = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-display" })
+const body = Outfit({ subsets: ["latin"], variable: "--font-body" })
+const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })
+
+import Navbar from "@/components/layout/Navbar";
+import DetailModal from "@/components/modals/DetailModal";
+import PlayerOverlay from "@/components/player/PlayerOverlay";
+import Toast from "@/components/ui/Toast";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,9 +24,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${display.variable} ${body.variable} ${mono.variable} antialiased`}
       >
-        {children}
+        <Navbar />
+        <main className="min-h-screen bg-[var(--color-bg)]">
+          {children}
+        </main>
+        <DetailModal />
+        <PlayerOverlay />
+        <Toast />
       </body>
     </html>
   );
