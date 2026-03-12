@@ -16,13 +16,37 @@ export function useRows(tab, genreId) {
     if (cached) { setRows(cached); setLoading(false); return; }
     let dead = false;
     setLoading(true);
-    const cfg    = ROW_CONFIG[tab] || ROW_CONFIG.home;
-    const params = genreId ? { with_genres: genreId, page: 1 } : { page: 1 };
+    const cfg = ROW_CONFIG[tab] || ROW_CONFIG.home;
 
     Promise.all(
       cfg.map(async (r) => {
         try {
-          const data  = await tmdb(r.endpoint, params);
+          let endpoint = r.endpoint;
+          const params = { page: 1 };
+
+          // If a genre is selected, we MUST use /discover since /movie/popular, /trending, etc ignore with_genres
+          if (genreId) {
+            params.with_genres = genreId;
+
+            const isMovie = endpoint.includes("/movie/") || endpoint.includes("trending/movie");
+            const isTV = endpoint.includes("/tv/") || endpoint.includes("trending/tv");
+            const type = isMovie ? "movie" : isTV ? "tv" : "movie"; // Default to movie for mixed endpoints
+
+            endpoint = `/discover/${type}`;
+            
+            // Replicate the original endpoint's behavior using sorting/filtering
+            if (r.endpoint.includes("top_rated")) {
+              params.sort_by = "vote_average.desc";
+              params["vote_count.gte"] = 200;
+            } else if (r.endpoint.includes("airing") || r.endpoint.includes("now_playing")) {
+              params.sort_by = "popularity.desc";
+              // Ideally we'd filter by release date but keep it simple
+            } else {
+              params.sort_by = "popularity.desc"; // Default for popular/trending
+            }
+          }
+
+          const data  = await tmdb(endpoint, params);
           const items = (data.results || [])
             .filter((i) => i.poster_path)
             .map(normalizeItem);
