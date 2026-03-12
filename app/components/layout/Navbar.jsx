@@ -2,7 +2,7 @@
 // components/layout/Navbar.jsx
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Search, X, Film, Clapperboard } from "lucide-react";
+import { Search, X, Film, Clapperboard, Menu } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useGenreMap } from "@/hooks/useTMDB";
 
@@ -11,6 +11,9 @@ const NAV_LINKS = [
   { label: "Movies", href: "/movies" },
   { label: "TV Shows", href: "/tv" },
   { label: "Trending", href: "/trending" },
+  { label: "Categories", href: "/categories" },
+  { label: "Languages", href: "/languages" },
+  { label: "Years", href: "/years" },
 ];
 
 export default function Navbar() {
@@ -18,7 +21,17 @@ export default function Navbar() {
   const router = useRouter();
   const { searchOpen, setSearchOpen, setSearchQuery, searchQuery } = useStore();
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => { document.body.style.overflow = "auto"; };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -127,15 +140,49 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Avatar */}
-        <div
-          className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold font-body text-white cursor-pointer hover:opacity-80 transition-opacity select-none"
-          style={{ background: "linear-gradient(135deg, var(--color-brand), #e11d48)" }}
-          title="My Profile"
+        {/* Mobile Menu Toggle */}
+        <button
+          onClick={() => setMobileMenuOpen(true)}
+          className="md:hidden w-9 h-9 flex items-center justify-center text-white/80 hover:text-white transition-colors"
+          aria-label="Open menu"
         >
-          JF
-        </div>
+          <Menu className="w-6 h-6" />
+        </button>
       </div>
+
+      {/* Full Screen Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-xl flex flex-col pt-24 px-8 animate-fade-in md:hidden">
+          <button 
+            onClick={() => setMobileMenuOpen(false)}
+            className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center text-white/50 hover:text-white transition-colors bg-white/10 rounded-full"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          
+          <div className="flex flex-col gap-8 mt-10">
+            {NAV_LINKS.map((l, i) => {
+              const active = router.pathname === l.href;
+              return (
+                <button
+                  key={l.href}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    router.push(l.href);
+                  }}
+                  className={[
+                    "text-4xl font-display tracking-wide text-left transition-all duration-300 transform",
+                    active ? "text-[var(--color-brand)] translate-x-4" : "text-white/70 hover:text-white hover:translate-x-2"
+                  ].join(" ")}
+                  style={{ animationFillMode: "both", animationDelay: `${i * 50}ms` }}
+                >
+                  {l.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
