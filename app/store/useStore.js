@@ -55,10 +55,17 @@ const useStore = create(
         set({ toastMsg: msg, toastVisible: true });
         setTimeout(() => set({ toastVisible: false }), 3000);
       },
+
+      // ── Brave Suggestion ──────────────────────────────────────
+      braveSuggestionDismissed: false,
+      dismissBraveSuggestion: () => set({ braveSuggestionDismissed: true }),
     }),
     {
       name: "stream-it-storage",
-      partialize: (state) => ({ provider: state.provider }), // only persist provider
+      partialize: (state) => ({ 
+        provider: state.provider,
+        braveSuggestionDismissed: state.braveSuggestionDismissed
+      }), 
     }
   )
 );
