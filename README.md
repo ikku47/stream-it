@@ -14,7 +14,9 @@
     <a href="#tech-stack">Tech Stack</a> •
     <a href="#getting-started">Getting Started</a> •
     <a href="#configuration">Configuration</a> •
-    <a href="#contributing">Contributing</a>
+    <a href="#%F0%9F%93%BA-streaming-providers">Providers</a> •
+    <a href="#contributing">Contributing</a> •
+    <a href="#%EF%B8%8F-legal-disclaimer">Legal Disclaimer</a>
   </p>
 </div>
 
@@ -26,12 +28,15 @@ JoyFlix is a premium, open-source movie and TV show discovery application built 
 
 ## ✨ Features
 
-- **Cinematic UI/UX:** A stunning, fully responsive design featuring dynamic gradients, glassmorphic panels, and polished animations.
-- **Advanced Discovery:** Filter through a vast database of movies and TV shows by Categories, Languages, and Release Years simultaneously.
-- **Smart Search:** Lightning-fast, debounced global search to instantly find your favorite titles.
-- **Infinite Scrolling:** Seamlessly load more content as you scroll with intelligent Intersection Observer integration.
-- **Unified State Management:** Highly optimized global UI states using Zustand for instant UI updates and seamless memory caching.
-- **Strictly Typed Architecture:** Built with comprehensive internal TypeScript models for extreme reliability and developer ease.
+- [x] **Cinematic UI/UX:** A stunning, fully responsive design featuring dynamic gradients, glassmorphic panels, and polished animations.
+- [x] **Advanced Discovery:** Filter through a vast database of movies and TV shows by Categories, Languages, and Release Years simultaneously.
+- [x] **Smart Search:** Lightning-fast, debounced global search to instantly find your favorite titles.
+- [x] **Infinite Scrolling:** Seamlessly load more content as you scroll with intelligent Intersection Observer integration.
+- [x] **Unified State Management:** Highly optimized global UI states using Zustand for instant UI updates, seamless memory caching, and persisted user preferences.
+- [x] **Multiple Video Providers:** Seamlessly switch between multiple streaming backends (VidSrc, VidLink, Nunes, and various mirrors) with globally persisted selection.
+- [x] **Progressive Web App (PWA):** Installable as a standalone app on iOS, Android, and Desktop for a native application feel.
+- [x] **Ad-Free Guidance:** Built-in detection and automated UI prompts recommending Brave Browser to ensure a high-quality, ad-free streaming experience.
+- [x] **Strictly Typed Architecture:** Built with comprehensive internal TypeScript models for extreme reliability and developer ease.
 
 ## 🛠 Tech Stack
 
@@ -92,16 +97,37 @@ You will need **Node.js 20+** and your preferred package manager (npm, pnpm, yar
 │   ├── components/       # Reusable UI elements (Cards, Nav, Discovery Grids)
 │   ├── hooks/            # Custom React hooks (TMDB fetching, search)
 │   ├── languages/        # Deep-dive language filtering pages
-│   ├── lib/              # Core utilities and TMDB configurations
+│   ├── lib/              # Core utilities, API bindings, and Provider configurations
+│   │   └── providers/    # Video source configurations (VidSrc, VidLink, Nunes, etc.)
 │   ├── movies/           # Dedicated movies hub
 │   ├── store/            # Zustand global stores
 │   ├── trending/         # Daily & Weekly trending hubs
 │   ├── tv/               # Dedicated TV shows hub
 │   └── years/            # Year-based filtering pages
-├── public/               # Static assets & cover images
+├── public/               # Static assets & PWA icons
 ├── types/                # Global TypeScript definitions (index.d.ts)
 └── README.md
 ```
+
+## 📺 Streaming Providers
+
+JoyFlix is designed to be provider-agnostic. The video sources are modularized within `app/lib/providers/` and allow users to select their preferred backend right from the Navigation bar. The user's choice is persisted locally using Zustand.
+
+The core provider logic automatically determines if a media item is a `Movie` or a `TV Show` based on TMDB metadata (`media_type` or the presence of `first_air_date`). It then dynamically constructs the correct embed URL, appending season and episode parameters when necessary.
+
+**Available Providers include:**
+
+- **Nunes Network:** `https://tmdbplayer.nunesnetwork.com` (Default)
+- **VidSrc Default:** `https://vidsrc.me`
+- **VidSrc Alternative Mirrors:**
+  - `https://vidsrc-embed.ru`
+  - `https://vidsrcme.ru`
+  - `https://vidsrc-me.ru`
+  - `https://vidsrc-me.su`
+  - `https://vsembed.ru`
+- **VidLink:** `https://vidlink.pro`
+
+To add a new provider, simply create a new configuration object in `app/lib/providers` that satisfies the `{ id, name, getUrl() }` signature, and export it in `index.js`.
 
 ## 🤝 Contributing
 
@@ -115,7 +141,32 @@ We love contributions! Whether you're fixing a bug, adding a new feature, or imp
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## ⚖️ Legal Disclaimer
+
+**IMPORTANT: This application is for educational and personal use only.**
+
+- JoyFlix does not host, store, or distribute any copyrighted content.
+- All content is sourced dynamically from third-party providers and websites.
+- Users are solely responsible for ensuring they have legal rights to access any content.
+- The developers do not endorse or encourage copyright infringement.
+- Users must comply with all applicable laws in their jurisdiction.
+- Any legal issues should be directed to the actual content providers.
+- This app functions as a search engine aggregator only.
+- No copyrighted material is stored on our servers.
+
+### Legal Notice
+
+This application is provided "as is" for educational purposes. The developers:
+
+- Do not claim ownership of any content.
+- Do not profit from copyrighted material.
+- Do not control third-party content providers.
+- Encourage users to support content creators through legal means.
+- Recommend using official streaming services when available.
 
 ---
 
