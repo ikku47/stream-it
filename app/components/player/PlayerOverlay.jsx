@@ -2,11 +2,12 @@
 // components/player/PlayerOverlay.jsx
 import { useEffect } from "react";
 import { ArrowLeft, Maximize2 } from "lucide-react";
-import { PLAYER_URL, getTitle, isTV } from "../../lib/tmdb";
+import { getTitle, isTV } from "../../lib/tmdb";
+import { getProviderUrl } from "../../lib/providers";
 import useStore from "../../store/useStore";
 
 export default function PlayerOverlay() {
-  const { playerItem, closePlayer, selectedSeason, selectedEpisode } = useStore();
+  const { playerItem, closePlayer, selectedSeason, selectedEpisode, provider } = useStore();
 
   useEffect(() => {
     document.body.style.overflow = playerItem ? "hidden" : "";
@@ -24,9 +25,7 @@ export default function PlayerOverlay() {
   const tv = isTV(playerItem);
   const title = getTitle(playerItem);
 
-  const params = new URLSearchParams({ type: tv ? "tv" : "movie", id: playerItem.id, server: 1 });
-  if (tv) { params.set("s", selectedSeason); params.set("e", selectedEpisode); }
-  const src = `${PLAYER_URL}?${params}`;
+  const src = getProviderUrl(provider, playerItem, selectedSeason, selectedEpisode);
 
   const displayTitle = tv
     ? `${title} — S${selectedSeason} E${selectedEpisode}`

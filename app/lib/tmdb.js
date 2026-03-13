@@ -2,7 +2,6 @@
 export const TMDB_KEY = "2dca580c2a14b55200e784d157207b4d";
 export const TMDB_BASE = "https://api.themoviedb.org/3";
 export const IMG_BASE = "https://image.tmdb.org/t/p/";
-export const PLAYER_URL = "https://tmdbplayer.nunesnetwork.com/";
 
 export const img = (path, size = "w500") =>
   path ? `${IMG_BASE}${size}${path}` : null;

@@ -2,9 +2,10 @@
 // components/layout/Navbar.jsx
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Search, X, Film, Clapperboard, Menu } from "lucide-react";
+import { Search, X, Film, Clapperboard, Menu, Server } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useGenreMap } from "@/hooks/useTMDB";
+import { PROVIDERS } from "@/lib/providers";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -19,7 +20,7 @@ const NAV_LINKS = [
 export default function Navbar() {
   useGenreMap(); // preload genre map globally
   const router = useRouter();
-  const { searchOpen, setSearchOpen, setSearchQuery, searchQuery } = useStore();
+  const { searchOpen, setSearchOpen, setSearchQuery, searchQuery, provider, setProvider } = useStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const inputRef = useRef(null);
@@ -62,7 +63,7 @@ export default function Navbar() {
     <nav
       className={[
         "fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-8 h-[64px] transition-all duration-300",
-        scrolled ? "glass shadow-lg shadow-black/30" : "bg-gradient-to-b from-black/80 to-transparent",
+        scrolled ? "glass  bg-gradient-to-b from-black/80 to-transparent" : "bg-gradient-to-b from-black/80 to-transparent",
       ].join(" ")}
     >
       {/* Logo */}
@@ -102,8 +103,24 @@ export default function Navbar() {
         })}
       </ul>
 
-      {/* Right: search + avatar */}
+      {/* Right: search + provider */}
       <div className="flex items-center gap-3">
+        {/* Provider switch (Desktop) */}
+        <div className="hidden md:flex items-center gap-2 mr-2">
+          <Server className="w-4 h-4 text-white/40" />
+          <select
+            value={provider}
+            onChange={(e) => setProvider(e.target.value)}
+            className="bg-transparent text-sm text-white/70 font-body outline-none appearance-none cursor-pointer hover:text-white transition-colors"
+          >
+            {PROVIDERS.map((p) => (
+              <option key={p.id} value={p.id} className="bg-[#111] text-white">
+                {p.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Search bar */}
         <div className="flex items-center gap-2">
           <div
@@ -153,13 +170,13 @@ export default function Navbar() {
       {/* Full Screen Mobile Menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-xl flex flex-col pt-24 px-8 animate-fade-in md:hidden">
-          <button 
+          <button
             onClick={() => setMobileMenuOpen(false)}
             className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center text-white/50 hover:text-white transition-colors bg-white/10 rounded-full"
           >
             <X className="w-5 h-5" />
           </button>
-          
+
           <div className="flex flex-col gap-8 mt-10">
             {NAV_LINKS.map((l, i) => {
               const active = router.pathname === l.href;
@@ -180,6 +197,24 @@ export default function Navbar() {
                 </button>
               );
             })}
+            
+            <div
+              className="mt-8 flex items-center gap-3 text-white/70 animate-fade-in"
+              style={{ animationFillMode: "both", animationDelay: `${NAV_LINKS.length * 50}ms` }}
+            >
+              <Server className="w-6 h-6" />
+              <select
+                value={provider}
+                onChange={(e) => setProvider(e.target.value)}
+                className="bg-transparent text-2xl font-display outline-none appearance-none cursor-pointer hover:text-white transition-colors flex-1"
+              >
+                {PROVIDERS.map((p) => (
+                  <option key={p.id} value={p.id} className="bg-[#111] text-white text-base font-body">
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       )}
