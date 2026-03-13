@@ -10,12 +10,12 @@
   </p>
   
   <p>
-    <a href="#features">Features</a> •
-    <a href="#tech-stack">Tech Stack</a> •
-    <a href="#getting-started">Getting Started</a> •
-    <a href="#configuration">Configuration</a> •
-    <a href="#%F0%9F%93%BA-streaming-providers">Providers</a> •
-    <a href="#contributing">Contributing</a> •
+    <a href="#-features">Features</a> •
+    <a href="#-tech-stack">Tech Stack</a> •
+    <a href="#-getting-started">Getting Started</a> •
+    <a href="#-project-structure">Project Structure</a> •
+    <a href="#-streaming-providers">Streaming Providers</a> •
+    <a href="#-contributing">Contributing</a> •
     <a href="#%EF%B8%8F-legal-disclaimer">Legal Disclaimer</a>
   </p>
 </div>
