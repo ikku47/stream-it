@@ -1,7 +1,7 @@
 'use client';
 // components/layout/Navbar.jsx
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Search, X, Film, Clapperboard, Menu, Server } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useGenreMap } from "@/hooks/useTMDB";
@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Movies", href: "/movies" },
   { label: "TV Shows", href: "/tv" },
+  { label: "Live TV", href: "/live-tv" },
   { label: "Trending", href: "/trending" },
   { label: "Categories", href: "/categories" },
   { label: "Languages", href: "/languages" },
@@ -20,6 +21,7 @@ const NAV_LINKS = [
 export default function Navbar() {
   useGenreMap(); // preload genre map globally
   const router = useRouter();
+  const pathname = usePathname();
   const { searchOpen, setSearchOpen, setSearchQuery, searchQuery, provider, setProvider } = useStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -84,7 +86,7 @@ export default function Navbar() {
       {/* Nav links — hidden on mobile */}
       <ul className="hidden md:flex items-center gap-1">
         {NAV_LINKS.map((l) => {
-          const active = router.pathname === l.href;
+          const active = pathname === l.href;
           return (
             <li key={l.href}>
               <button
@@ -179,7 +181,7 @@ export default function Navbar() {
 
           <div className="flex flex-col gap-8 mt-10">
             {NAV_LINKS.map((l, i) => {
-              const active = router.pathname === l.href;
+              const active = pathname === l.href;
               return (
                 <button
                   key={l.href}

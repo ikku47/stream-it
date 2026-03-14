@@ -33,6 +33,7 @@ JoyFlix is a premium, open-source movie and TV show discovery application built 
 - [x] **Smart Search:** Lightning-fast, debounced global search to instantly find your favorite titles.
 - [x] **Infinite Scrolling:** Seamlessly load more content as you scroll with intelligent Intersection Observer integration.
 - [x] **Unified State Management:** Highly optimized global UI states using Zustand for instant UI updates, seamless memory caching, and persisted user preferences.
+- [x] **Live TV Streaming:** Access thousands of global television channels via integrated IPTV support from open-source community libraries.
 - [x] **Multiple Video Providers:** Seamlessly switch between multiple streaming backends (VidSrc, VidLink, Nunes, and various mirrors) with globally persisted selection.
 - [x] **Progressive Web App (PWA):** Installable as a standalone app on iOS, Android, and Desktop for a native application feel.
 - [x] **Ad-Free Guidance:** Built-in detection and automated UI prompts recommending Brave Browser to ensure a high-quality, ad-free streaming experience.
@@ -45,8 +46,11 @@ JoyFlix is a premium, open-source movie and TV show discovery application built 
 - **UI Library:** [React 19](https://react.dev/)
 - **Styling:** [Tailwind CSS v4](https://tailwindcss.com/) & Vanilla CSS Modules
 - **State Management:** [Zustand](https://github.com/pmndrs/zustand)
+- **Virtualization:** [React Virtuoso](https://virtuoso.dev/) (for massive live TV lists)
 - **Icons:** [Lucide React](https://lucide.dev/)
-- **Data Source:** [TMDB API](https://www.themoviedb.org/)
+- **Data Source (VOD):** [TMDB API](https://www.themoviedb.org/)
+- **Data Source (Live):** [IPTV-org](https://github.com/iptv-org/iptv)
+- **Video Playback:** Native HLS & [Hls.js](https://github.com/video-dev/hls.js/) (CDN)
 
 ## 🚀 Getting Started
 
@@ -103,6 +107,7 @@ You will need **Node.js 20+** and your preferred package manager (npm, pnpm, yar
 │   ├── store/            # Zustand global stores
 │   ├── trending/         # Daily & Weekly trending hubs
 │   ├── tv/               # Dedicated TV shows hub
+│   ├── live-tv/          # Live television discovery & streaming engine
 │   └── years/            # Year-based filtering pages
 ├── public/               # Static assets & PWA icons
 ├── types/                # Global TypeScript definitions (index.d.ts)
@@ -152,6 +157,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - JoyFlix does not host, store, or distribute any copyrighted content.
 - All content is sourced dynamically from third-party providers and websites.
 - Users are solely responsible for ensuring they have legal rights to access any content.
+- **IPTV Streams**: Live TV channels are provided as-is from publicly available GitHub repositories (e.g., IPTV-org). JoyFlix does not check the legal status of individual streams.
 - The developers do not endorse or encourage copyright infringement.
 - Users must comply with all applicable laws in their jurisdiction.
 - Any legal issues should be directed to the actual content providers.
