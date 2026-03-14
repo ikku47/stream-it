@@ -2,13 +2,13 @@ import { nunesProvider } from "./nunes";
 import { vidSrcProvider } from "./vidsrc";
 import { vidLinkProvider } from "./vidlink";
 import { vidsrcAltProviders } from "./vidsrc-alt";
-import { moflixProvider } from "./moflix";
+// import { moflixProvider } from "./moflix";
 
 export const PROVIDERS = [
   nunesProvider,
   vidSrcProvider,
   vidLinkProvider,
-  moflixProvider,
+  // moflixProvider,
   ...vidsrcAltProviders,
 ];
 
