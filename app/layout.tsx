@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Outfit, JetBrains_Mono } from "next/font/google"
-
+import { Analytics } from "@vercel/analytics/next"
 const display = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-display" })
 const body = Outfit({ subsets: ["latin"], variable: "--font-body" })
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })
