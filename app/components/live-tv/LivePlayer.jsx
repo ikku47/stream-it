@@ -7,57 +7,125 @@ export default function LivePlayer({ channel, onClose }) {
   const videoRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [errorDetails, setErrorDetails] = useState("");
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [hlsSupported, setHlsSupported] = useState(false);
+  const hlsRef = useRef(null);
   
   const timerRef = useRef(null);
 
-  useEffect(() => {
+  const loadStream = () => {
     const video = videoRef.current;
     if (!video || !channel.url) return;
 
+    // 1. Reset all states for the new channel
     setLoading(true);
     setError(false);
+    setErrorDetails("");
+    setIsPlaying(true);
 
+    // 2. Cleanup previous playback session
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+    video.pause();
+    video.src = "";
+    video.load();
+
+    // 3. Initiate new playback
     // Native HLS support (Safari)
     if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = channel.url;
       setHlsSupported(true);
-      video.play().catch(() => setIsPlaying(false));
+      video.play().catch((e) => {
+        setIsPlaying(false);
+        if (video.src) {
+          setError(true);
+          setErrorDetails("Playback failed. This stream might be incompatible with your browser.");
+        }
+      });
     } 
-    // Chrome/Firefox need Hls.js
+    // Chrome/Firefox/Others need Hls.js
     else {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/hls.js@latest';
-      script.async = true;
-      script.onload = () => {
+      const initHls = () => {
+        if (!window.Hls) {
+          setError(true);
+          setErrorDetails("Streaming engine is currently unavailable.");
+          return;
+        }
+
         if (window.Hls.isSupported()) {
-          const hls = new window.Hls();
+          const hls = new window.Hls({
+            enableWorker: true,
+            lowLatencyMode: true,
+            backBufferLength: 60,
+            maxBufferLength: 30,
+            manifestLoadingMaxRetry: 3,
+          });
+          hlsRef.current = hls;
           hls.loadSource(channel.url);
           hls.attachMedia(video);
+          
           hls.on(window.Hls.Events.MANIFEST_PARSED, () => {
             video.play().catch(() => setIsPlaying(false));
             setLoading(false);
           });
+
           hls.on(window.Hls.Events.ERROR, (event, data) => {
             if (data.fatal) {
-              setError(true);
               setLoading(false);
+              setError(true);
+              switch (data.type) {
+                case window.Hls.ErrorTypes.NETWORK_ERROR:
+                  setErrorDetails("Network link interrupted. The stream may be offline.");
+                  break;
+                case window.Hls.ErrorTypes.MEDIA_ERROR:
+                  setErrorDetails("Compatibility error: Failed to decode stream.");
+                  hls.recoverMediaError();
+                  break;
+                default:
+                  setErrorDetails("An unexpected player error occurred.");
+                  hls.destroy();
+                  break;
+              }
             }
           });
           setHlsSupported(true);
         } else {
           setError(true);
+          setErrorDetails("Your browser doesn't support live HLS streaming.");
           setLoading(false);
         }
       };
-      document.body.appendChild(script);
-      return () => {
-        if (document.body.contains(script)) document.body.removeChild(script);
-      };
+
+      if (window.Hls) {
+        initHls();
+      } else {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/hls.js@latest';
+        script.async = true;
+        script.onload = initHls;
+        script.onerror = () => {
+          setError(true);
+          setErrorDetails("Critical: Streaming engine failed to load.");
+          setLoading(false);
+        };
+        document.body.appendChild(script);
+      }
     }
+  };
+
+  useEffect(() => {
+    loadStream();
+    return () => {
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+    };
   }, [channel.url]);
 
   useEffect(() => {
@@ -130,15 +198,26 @@ export default function LivePlayer({ channel, onClose }) {
           ref={videoRef}
           className="w-full h-full object-contain cursor-pointer"
           onClick={togglePlay}
-          onPlaying={() => setLoading(false)}
+          onPlaying={() => {
+            setLoading(false);
+            setError(false);
+          }}
           onWaiting={() => setLoading(true)}
+          onError={() => {
+            if (channel.url && !error) {
+              setLoading(false);
+              setError(true);
+              setErrorDetails("Native video playback error.");
+            }
+          }}
           autoPlay
           muted={isMuted}
+          playsInline
         />
 
-        {/* Loading Overlay */}
+        {/* Loading Overlay — only if we don't have an error */}
         {loading && !error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] z-20">
             <div className="flex flex-col items-center gap-4">
               <div className="w-12 h-12 border-4 border-[var(--color-brand)]/20 border-t-[var(--color-brand)] rounded-full animate-spin" />
               <p className="text-white/50 text-sm font-body animate-pulse">Buffering live stream...</p>
@@ -148,25 +227,27 @@ export default function LivePlayer({ channel, onClose }) {
 
         {/* Error Overlay */}
         {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-md">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-md z-30">
             <div className="flex flex-col items-center gap-6 text-center max-w-sm px-6">
               <div className="w-16 h-16 rounded-3xl bg-red-500/10 flex items-center justify-center">
                 <AlertCircle className="w-8 h-8 text-red-500" />
               </div>
               <div>
                 <h4 className="text-white text-xl font-display mb-2">Stream Unavailable</h4>
-                <p className="text-white/40 text-sm font-body">This channel's broadcast is currently offline or the stream link has expired.</p>
+                <p className="text-white/40 text-sm font-body">
+                  {errorDetails || "This channel's broadcast is currently offline or the stream link has expired."}
+                </p>
               </div>
               <div className="flex gap-3">
                 <button 
-                  onClick={() => window.location.reload()}
-                  className="px-6 py-2 bg-white text-black rounded-full font-body text-sm font-bold hover:bg-white/80 transition-all"
+                  onClick={loadStream}
+                  className="px-6 py-2 bg-[var(--color-brand)] text-white rounded-full font-body text-sm font-bold hover:scale-105 transition-all shadow-lg shadow-[var(--color-brand)]/20"
                 >
-                  Reload App
+                  Retry Stream
                 </button>
                 <button 
                   onClick={onClose}
-                  className="px-6 py-2 bg-white/10 text-white rounded-full font-body text-sm hover:bg-white/20 transition-all"
+                  className="px-6 py-2 bg-white/10 text-white rounded-full font-body text-sm hover:bg-white/20 transition-all border border-white/5"
                 >
                   Close
                 </button>

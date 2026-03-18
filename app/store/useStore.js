@@ -59,11 +59,16 @@ const useStore = create(
       // ── Brave Suggestion ──────────────────────────────────────
       braveSuggestionDismissed: false,
       dismissBraveSuggestion: () => set({ braveSuggestionDismissed: true }),
+
+      // ── IPTV Provider ─────────────────────────────────────────
+      iptvProviderId: "iptv-org",
+      setIPTVProvider: (id) => set({ iptvProviderId: id }),
     }),
     {
       name: "stream-it-storage",
       partialize: (state) => ({ 
         provider: state.provider,
+        iptvProviderId: state.iptvProviderId,
         braveSuggestionDismissed: state.braveSuggestionDismissed
       }), 
     }

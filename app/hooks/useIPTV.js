@@ -1,14 +1,14 @@
 'use client';
 // hooks/useIPTV.js
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { parseM3U, getGroups, filterChannels, IPTV_URL } from '../lib/iptv';
+import { parseM3U, getGroups, filterChannels, getIPTVProvider } from '../lib/iptv';
+import useStore from '../store/useStore';
 
-const CACHE_KEY = 'iptv_channels_cache';
 const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
 
-function getCached() {
+function getCached(providerId) {
   try {
-    const raw = sessionStorage.getItem(CACHE_KEY);
+    const raw = sessionStorage.getItem(`iptv_cache_${providerId}`);
     if (!raw) return null;
     const { ts, data } = JSON.parse(raw);
     if (Date.now() - ts > CACHE_TTL) return null;
@@ -18,19 +18,22 @@ function getCached() {
   }
 }
 
-function setCache(data) {
+function setCache(providerId, data) {
   try {
-    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+    sessionStorage.setItem(`iptv_cache_${providerId}`, JSON.stringify({ ts: Date.now(), data }));
   } catch {}
 }
 
 export function useIPTV() {
+  const { iptvProviderId } = useStore();
   const [channels, setChannels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const cached = getCached();
+    const provider = getIPTVProvider(iptvProviderId);
+    const cached = getCached(iptvProviderId);
+    
     if (cached) {
       setChannels(cached);
       setLoading(false);
@@ -38,7 +41,7 @@ export function useIPTV() {
     }
 
     setLoading(true);
-    fetch(IPTV_URL)
+    fetch(provider.url)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.text();
@@ -47,15 +50,17 @@ export function useIPTV() {
         // Handle both \n and \r\n line endings
         const normalizedText = text.replace(/\r\n/g, '\n');
         const parsed = parseM3U(normalizedText);
-        setCache(parsed);
+        setCache(iptvProviderId, parsed);
         setChannels(parsed);
         setLoading(false);
+        setError(null);
       })
       .catch((e) => {
         setError(e.message);
         setLoading(false);
+        setChannels([]);
       });
-  }, []);
+  }, [iptvProviderId]);
 
   return { channels, loading, error };
 }

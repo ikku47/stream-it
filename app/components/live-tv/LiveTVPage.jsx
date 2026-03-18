@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect, useMemo, forwardRef } from "react";
-import { Search, Play, Tv, Info, AlertCircle, ChevronRight, LayoutGrid, List as ListIcon } from "lucide-react";
+import { Search, Play, Tv, Info, AlertCircle, ChevronRight, LayoutGrid, List as ListIcon, Server } from "lucide-react";
 import { VirtuosoGrid } from "react-virtuoso";
 import useStore from "@/store/useStore";
 import { useIPTV, useIPTVFiltered, useIPTVGroups } from "@/hooks/useIPTV";
-import { getGroupIcon } from "@/lib/iptv";
+import { getGroupIcon, IPTV_PROVIDERS } from "@/lib/iptv";
 import LivePlayer from "./LivePlayer";
 
 /**
@@ -113,6 +113,7 @@ ItemWrapper.displayName = "ItemWrapper";
 export default function LiveTVPage() {
   const { channels, loading, error } = useIPTV();
   const groups = useIPTVGroups(channels);
+  const { setTab, iptvProviderId, setIPTVProvider } = useStore();
   
   const [selectedGroup, setSelectedGroup] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -121,8 +122,7 @@ export default function LiveTVPage() {
 
   const filteredChannels = useIPTVFiltered(channels, selectedGroup, searchQuery);
 
-  const { setTab } = useStore();
-  useEffect(() => { setTab("live-tv"); }, []);
+  useEffect(() => { setTab("live-tv"); }, [setTab]);
 
   if (error) {
     return (
@@ -152,6 +152,22 @@ export default function LiveTVPage() {
           <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/5">
             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
             <span className="text-[11px] font-medium text-white/60">{loading ? "SYNCING..." : `${filteredChannels.length} ONLINE`}</span>
+          </div>
+
+          {/* Provider Selector (Left) */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-white/5 rounded-2xl border border-white/5 ml-2">
+            <Server className="w-3.5 h-3.5 text-white/30" />
+            <select
+              value={iptvProviderId}
+              onChange={(e) => setIPTVProvider(e.target.value)}
+              className="bg-transparent text-[11px] font-medium text-white/60 outline-none appearance-none cursor-pointer hover:text-white transition-colors"
+            >
+              {IPTV_PROVIDERS.map((p) => (
+                <option key={p.id} value={p.id} className="bg-[#111] text-white text-xs">
+                  {p.name.split(' (')[0]}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 

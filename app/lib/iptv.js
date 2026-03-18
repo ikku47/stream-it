@@ -1,6 +1,61 @@
 // lib/iptv.js — IPTV-org playlist utilities
 
-export const IPTV_URL = 'https://iptv-org.github.io/iptv/index.m3u';
+export const IPTV_PROVIDERS = [
+  {
+    id: 'iptv-org',
+    name: 'IPTV-org (Default)',
+    url: 'https://iptv-org.github.io/iptv/index.m3u'
+  },
+  {
+    id: 'cricHd',
+    name: 'CricHD (Alt)',
+    url: 'https://raw.githubusercontent.com/abusaeeidx/CricHd-playlists-Auto-Update-permanent/refs/heads/main/ALL.m3u'
+  },
+  {
+    id: 'devforge',
+    name: 'DevForge (Alt)',
+    url: 'https://iptv.devforge.qzz.io/playlist/playlist.m3u'
+  },
+  {
+    id: 'plex',
+    name: 'Plex (Alt)',
+    url: 'https://raw.githubusercontent.com/BuddyChewChew/app-m3u-generator/main/playlists/plex_all.m3u'
+  },
+  {
+    id: 'pluto',
+    name: 'Pluto (Alt)',
+    url: 'https://raw.githubusercontent.com/BuddyChewChew/app-m3u-generator/main/playlists/plutotv_all.m3u'
+  },
+  {
+    id: 'samsungtvplus',
+    name: 'Samsung TV Plus (Alt)',
+    url: 'https://raw.githubusercontent.com/BuddyChewChew/app-m3u-generator/refs/heads/main/playlists/samsungtvplus_all.m3u'
+  },
+  {
+    id: 'tubitv',
+    name: 'Tubi (Alt)',
+    url: 'https://raw.githubusercontent.com/BuddyChewChew/app-m3u-generator/refs/heads/main/playlists/tubi_all.m3u'
+  },
+  {
+    id: 'freetv',
+    name: 'Free TV (Alt)',
+    url: 'https://raw.githubusercontent.com/tenorioabsgit/IPTV/refs/heads/main/playlist.m3u'
+  },
+  {
+    id: 'ace',
+    name: 'Ace (Alt)',
+    url: 'https://raw.githubusercontent.com/dregs1/dregs1.github.io/f5422f13b8214f6373c0407f8651402cc6b937e1/xml/ace.m3u.xml'
+  },
+  {
+    id: 'desporto',
+    name: 'Desporto (Alt)',
+    url: 'https://raw.githubusercontent.com/dregs1/dregs1.github.io/f5422f13b8214f6373c0407f8651402cc6b937e1/xml/desporto.m3u'
+  }
+];
+
+export const getIPTVProvider = (id) => IPTV_PROVIDERS.find(p => p.id === id) || IPTV_PROVIDERS[0];
+
+export const IPTV_URL = IPTV_PROVIDERS[0].url;
 
 /**
  * Parse an M3U playlist string into an array of channel objects.
