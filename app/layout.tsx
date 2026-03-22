@@ -6,7 +6,6 @@ const body = Outfit({ subsets: ["latin"], variable: "--font-body" })
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })
 
 import Navbar from "@/components/layout/Navbar";
-import DetailModal from "@/components/modals/DetailModal";
 import PlayerOverlay from "@/components/player/PlayerOverlay";
 import Toast from "@/components/ui/Toast";
 import BraveSuggestionDialog from "@/components/layout/BraveSuggestionDialog";
@@ -44,7 +43,6 @@ export default function RootLayout({
         <main className="min-h-screen bg-[var(--color-bg)]">
           {children}
         </main>
-        <DetailModal />
         <PlayerOverlay />
         <BraveSuggestionDialog />
         <Toast />

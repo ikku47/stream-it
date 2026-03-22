@@ -21,10 +21,10 @@ const useStore = create(
       setTab:         (tab) => set({ currentTab: tab, currentGenreId: null }),
       setGenreId:     (id)  => set({ currentGenreId: id }),
 
-      // ── Modal ─────────────────────────────────────────────────
-      modalItem: null,
-      openModal:  (item) => set({ modalItem: item }),
-      closeModal: ()     => set({ modalItem: null }),
+      // ── Media Selection (Details) ─────────────────────────────
+      selectedMedia: null,
+      selectMedia: (item) => set({ selectedMedia: item }),
+      clearSelectedMedia: () => set({ selectedMedia: null }),
 
       // ── Player ────────────────────────────────────────────────
       playerItem:      null,
@@ -86,13 +86,16 @@ const useStore = create(
 
       // ── IPTV Provider ─────────────────────────────────────────
       iptvProviderId: "iptv-org",
+      activeLiveChannel: null,
       setIPTVProvider: (id) => set({ iptvProviderId: id }),
+      setActiveLiveChannel: (c) => set({ activeLiveChannel: c }),
     }),
     {
       name: "stream-it-storage",
       partialize: (state) => ({ 
         provider: state.provider,
         iptvProviderId: state.iptvProviderId,
+        activeLiveChannel: state.activeLiveChannel,
         braveSuggestionDismissed: state.braveSuggestionDismissed,
         favourites: state.favourites,
         continueWatching: state.continueWatching

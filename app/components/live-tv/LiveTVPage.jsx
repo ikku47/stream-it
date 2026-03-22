@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, forwardRef } from "react";
+import { useRouter } from "next/navigation";
 import { Search, Play, Tv, Info, AlertCircle, ChevronRight, LayoutGrid, List as ListIcon, Server } from "lucide-react";
 import { VirtuosoGrid } from "react-virtuoso";
 import useStore from "@/store/useStore";
@@ -113,12 +114,17 @@ ItemWrapper.displayName = "ItemWrapper";
 export default function LiveTVPage() {
   const { channels, loading, error } = useIPTV();
   const groups = useIPTVGroups(channels);
-  const { setTab, iptvProviderId, setIPTVProvider } = useStore();
+  const { setTab, iptvProviderId, setIPTVProvider, setActiveLiveChannel } = useStore();
+  const router = useRouter();
   
   const [selectedGroup, setSelectedGroup] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedChannel, setSelectedChannel] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
+
+  const handleSelectChannel = (channel) => {
+    setActiveLiveChannel(channel);
+    router.push("/live-tv/watch");
+  };
 
   const filteredChannels = useIPTVFiltered(channels, selectedGroup, searchQuery);
 
@@ -268,13 +274,13 @@ export default function LiveTVPage() {
                   <ChannelCard 
                     key={channel.url} 
                     channel={channel} 
-                    onSelect={setSelectedChannel} 
+                    onSelect={handleSelectChannel} 
                   />
                 ) : (
                   <ChannelRow 
                     key={channel.url} 
                     channel={channel} 
-                    onSelect={setSelectedChannel} 
+                    onSelect={handleSelectChannel} 
                   />
                 )
               )}
@@ -283,13 +289,6 @@ export default function LiveTVPage() {
         </main>
       </div>
 
-      {/* ─── PLAYER ─── */}
-      {selectedChannel && (
-        <LivePlayer 
-          channel={selectedChannel} 
-          onClose={() => setSelectedChannel(null)} 
-        />
-      )}
     </div>
   );
 }

@@ -1,20 +1,27 @@
-// components/cards/MediaCard.jsx
+import { useRouter } from "next/navigation";
 import { Play, Star, Tv, Film } from "lucide-react";
 import { imgFallback, scoreColor, getTitle, getYear, isTV } from "../../lib/tmdb";
 import useStore from "../../store/useStore";
 
 export default function MediaCard({ item, inGrid = false }) {
-  const { openModal, openPlayer } = useStore();
+  const router = useRouter();
+  const { selectMedia, openPlayer } = useStore();
   const tv    = isTV(item);
+  const type  = tv ? "tv" : "movie";
   const title = getTitle(item);
   const year  = getYear(item);
   const score = (item.vote_average || 0).toFixed(1);
   const color = scoreColor(parseFloat(score));
-  const norm  = { ...item, media_type: tv ? "tv" : "movie" };
+  const norm  = { ...item, media_type: type };
+
+  const handleNavigate = () => {
+    selectMedia(norm);
+    router.push(`/${type}/${item.id}`);
+  };
 
   return (
     <div
-      onClick={() => openModal(norm)}
+      onClick={handleNavigate}
       className={[
         "group relative flex-shrink-0 cursor-pointer rounded-[12px] overflow-hidden",
         "bg-[var(--color-surface-2)] transition-all duration-300",

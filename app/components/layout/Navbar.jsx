@@ -61,6 +61,8 @@ export default function Navbar() {
     if (e.key === "Escape") toggleSearch();
   };
 
+  if (pathname === "/live-tv/watch") return null;
+
   return (
     <nav
       className={[

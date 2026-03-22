@@ -88,23 +88,26 @@ export function useGenreMap() {
   return genreMap;
 }
 
-/* ── TV details + season/episode ─────────────────────── */
-export function useTVDetails(id, enabled) {
+/* ── Item details + season/episodes ────────────────── */
+export function useItemDetails(id, type) {
   const [details, setDetails] = useState(null);
 
   useEffect(() => {
-    if (!enabled || !id) return;
-    tmdb(`/tv/${id}`).then(setDetails).catch(() => {});
-  }, [id, enabled]);
+    if (!id || !type) return;
+    tmdb(`/${type}/${id}`, { append_to_response: 'credits,similar' })
+      .then(setDetails)
+      .catch((err) => console.error("Error fetching details", err));
+  }, [id, type]);
 
-  const fetchEpisodes = useCallback(async (season) => {
+  const fetchSeasonEpisodes = useCallback(async (season) => {
+    if (type !== 'tv') return [];
     try {
       const data = await tmdb(`/tv/${id}/season/${season}`);
-      return (data.episodes || []).length || 12;
-    } catch { return 12; }
-  }, [id]);
+      return data.episodes || [];
+    } catch { return []; }
+  }, [id, type]);
 
-  return { details, fetchEpisodes };
+  return { details, fetchSeasonEpisodes };
 }
 
 /* ── Search ──────────────────────────────────────────── */

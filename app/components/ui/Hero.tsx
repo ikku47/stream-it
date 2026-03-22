@@ -1,4 +1,4 @@
-// components/ui/Hero.jsx
+import { useRouter } from "next/navigation";
 import { Play, Info, Tv, Film, Heart } from "lucide-react";
 import { img, scoreColor, getTitle, getYear, isTV } from "../../lib/tmdb";
 import useStore from "../../store/useStore";
@@ -13,16 +13,23 @@ function HeroSkeleton() {
 }
 
 export default function Hero({ item }: { item: MediaItem | null }) {
-  const { openModal, openPlayer, favourites, toggleFavourite } = useStore();
+  const router = useRouter();
+  const { selectMedia, openPlayer, favourites, toggleFavourite } = useStore();
   if (!item) return <HeroSkeleton />;
 
   const tv      = isTV(item);
+  const type    = tv ? "tv" : "movie";
   const title   = getTitle(item);
   const score   = (item.vote_average || 0).toFixed(1);
   const year    = getYear(item);
   const bg      = img(item.backdrop_path, "original");
   const scoreC  = scoreColor(parseFloat(score));
-  const norm    = { ...item, media_type: tv ? "tv" : "movie" };
+  const norm    = { ...item, media_type: type };
+
+  const handleInfo = () => {
+     selectMedia(norm);
+     router.push(`/${type}/${item.id}`);
+  };
   const isFav   = favourites.some((f: any) => f.id === norm.id);
 
   return (
@@ -114,7 +121,7 @@ export default function Hero({ item }: { item: MediaItem | null }) {
               Play Now
             </button>
             <button
-              onClick={() => openModal(norm)}
+              onClick={handleInfo}
               className="glass flex items-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm text-white transition-all duration-200 hover:bg-white/10 hover:scale-105 active:scale-95"
             >
               <Info className="w-4 h-4" />
