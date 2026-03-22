@@ -1,7 +1,7 @@
 'use client';
 // components/modals/DetailModal.jsx
 import { useEffect, useState } from "react";
-import { X, Play, Youtube, Star, Tv, Film } from "lucide-react";
+import { X, Play, Youtube, Star, Tv, Film, Heart } from "lucide-react";
 import { img, imgFallback, scoreColor, getTitle, getYear, isTV } from "../../lib/tmdb";
 import { useTVDetails, fetchTrailer } from "../../hooks/useTMDB";
 import useStore from "../../store/useStore";
@@ -13,11 +13,14 @@ export default function DetailModal() {
     selectedSeason, selectedEpisode,
     setSeason, setEpisode,
     genreMap,
+    favourites, toggleFavourite,
   } = useStore();
 
   const item = modalItem;
   const tv = item ? isTV(item) : false;
   const { details, fetchEpisodes } = useTVDetails(item?.id, tv);
+
+  const isFav = item ? favourites.some(f => f.id === item.id) : false;
 
   const [episodeCount, setEpisodeCount] = useState(12);
 
@@ -227,6 +230,13 @@ export default function DetailModal() {
               >
                 <Youtube className="w-4 h-4" />
                 Trailer
+              </button>
+              <button
+                onClick={() => toggleFavourite(item)}
+                className={`glass-light flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 hover:scale-105 active:scale-95 ${isFav ? 'text-pink-500 bg-pink-500/10 border border-pink-500/30' : 'text-white/70 hover:text-white hover:bg-white/8 border border-transparent'}`}
+              >
+                <Heart className={`w-4 h-4 ${isFav ? 'fill-current text-pink-500' : ''}`} />
+                {isFav ? 'Favourited' : 'Favourite'}
               </button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 // components/ui/Hero.jsx
-import { Play, Info, Tv, Film } from "lucide-react";
+import { Play, Info, Tv, Film, Heart } from "lucide-react";
 import { img, scoreColor, getTitle, getYear, isTV } from "../../lib/tmdb";
 import useStore from "../../store/useStore";
 
@@ -13,7 +13,7 @@ function HeroSkeleton() {
 }
 
 export default function Hero({ item }: { item: MediaItem | null }) {
-  const { openModal, openPlayer } = useStore();
+  const { openModal, openPlayer, favourites, toggleFavourite } = useStore();
   if (!item) return <HeroSkeleton />;
 
   const tv      = isTV(item);
@@ -23,6 +23,7 @@ export default function Hero({ item }: { item: MediaItem | null }) {
   const bg      = img(item.backdrop_path, "original");
   const scoreC  = scoreColor(parseFloat(score));
   const norm    = { ...item, media_type: tv ? "tv" : "movie" };
+  const isFav   = favourites.some((f: any) => f.id === norm.id);
 
   return (
     <section className="relative w-full overflow-hidden" style={{ height: "78vh", minHeight: "520px" }}>
@@ -118,6 +119,13 @@ export default function Hero({ item }: { item: MediaItem | null }) {
             >
               <Info className="w-4 h-4" />
               More Info
+            </button>
+            <button
+              onClick={() => toggleFavourite(norm)}
+              className={`glass flex items-center justify-center w-[44px] h-[44px] rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 ${isFav ? 'bg-pink-500/20 text-pink-500 border border-pink-500/30' : 'text-white hover:bg-white/10'}`}
+              aria-label={isFav ? "Remove from Favourites" : "Add to Favourites"}
+            >
+              <Heart className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
             </button>
           </div>
         </div>

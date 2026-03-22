@@ -60,6 +60,30 @@ const useStore = create(
       braveSuggestionDismissed: false,
       dismissBraveSuggestion: () => set({ braveSuggestionDismissed: true }),
 
+      // ── Favourites & Continue Watching ────────────────────────
+      favourites: [],
+      continueWatching: [],
+      
+      toggleFavourite: (item) => set((s) => {
+        const isFav = s.favourites.some(f => f.id === item.id);
+        return {
+          favourites: isFav
+            ? s.favourites.filter(f => f.id !== item.id)
+            : [item, ...s.favourites]
+        };
+      }),
+
+      addToContinueWatching: (item, progressData) => set((s) => {
+        const existing = s.continueWatching.filter(i => i.id !== item.id);
+        const updatedItem = { ...item, _progress: progressData || {} };
+        return {
+          continueWatching: [updatedItem, ...existing].slice(0, 20)
+        };
+      }),
+      removeFromContinueWatching: (id) => set((s) => ({
+        continueWatching: s.continueWatching.filter(i => i.id !== id)
+      })),
+
       // ── IPTV Provider ─────────────────────────────────────────
       iptvProviderId: "iptv-org",
       setIPTVProvider: (id) => set({ iptvProviderId: id }),
@@ -69,7 +93,9 @@ const useStore = create(
       partialize: (state) => ({ 
         provider: state.provider,
         iptvProviderId: state.iptvProviderId,
-        braveSuggestionDismissed: state.braveSuggestionDismissed
+        braveSuggestionDismissed: state.braveSuggestionDismissed,
+        favourites: state.favourites,
+        continueWatching: state.continueWatching
       }), 
     }
   )

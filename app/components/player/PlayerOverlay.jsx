@@ -7,10 +7,20 @@ import { getProvider } from "../../lib/providers";
 import useStore from "../../store/useStore";
 
 export default function PlayerOverlay() {
-  const { playerItem, closePlayer, selectedSeason, selectedEpisode, provider: providerId } = useStore();
+  const { playerItem, closePlayer, selectedSeason, selectedEpisode, provider: providerId, addToContinueWatching } = useStore();
   const [servers, setServers] = useState([]);
   const [activeServer, setActiveServer] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (playerItem) {
+      addToContinueWatching(playerItem, {
+        season: selectedSeason,
+        episode: selectedEpisode,
+        timestamp: Date.now()
+      });
+    }
+  }, [playerItem, selectedSeason, selectedEpisode, addToContinueWatching]);
 
   useEffect(() => {
     document.body.style.overflow = playerItem ? "hidden" : "";
