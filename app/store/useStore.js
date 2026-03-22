@@ -30,8 +30,10 @@ const useStore = create(
       playerItem:      null,
       selectedSeason:  1,
       selectedEpisode: 1,
-      provider:        "tmdbplayer",
+      provider:        "afterdark",
+      playbackLang:    "en",
       setProvider:     (p) => set({ provider: p }),
+      setPlaybackLang: (l) => set({ playbackLang: l }),
       openPlayer: (item, season = 1, episode = 1) =>
         set({ playerItem: item, selectedSeason: season, selectedEpisode: episode }),
       closePlayer:  ()  => set({ playerItem: null }),
@@ -94,6 +96,7 @@ const useStore = create(
       name: "stream-it-storage",
       partialize: (state) => ({ 
         provider: state.provider,
+        playbackLang: state.playbackLang,
         iptvProviderId: state.iptvProviderId,
         activeLiveChannel: state.activeLiveChannel,
         braveSuggestionDismissed: state.braveSuggestionDismissed,
