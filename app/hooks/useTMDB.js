@@ -110,6 +110,30 @@ export function useItemDetails(id, type) {
   return { details, fetchSeasonEpisodes };
 }
 
+/* ── Person details + Combined Credits ───────────────── */
+export function usePersonDetails(id) {
+  const [person, setPerson] = useState(null);
+  const [credits, setCredits] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    tmdb(`/person/${id}`, { append_to_response: 'combined_credits' })
+      .then(data => {
+        setPerson(data);
+        const sorted = (data.combined_credits?.cast || [])
+          .filter(c => c.poster_path)
+          .sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
+        setCredits(sorted);
+      })
+      .catch((err) => console.error("Error fetching person details", err))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  return { person, credits, loading };
+}
+
 /* ── Search ──────────────────────────────────────────── */
 export function useSearch(query) {
   const { setSearchResults, setSearchLoading } = useStore();

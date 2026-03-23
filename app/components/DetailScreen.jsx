@@ -191,7 +191,10 @@ export default function DetailScreen({ id, type }) {
             <h3 className="text-white text-2xl lg:text-3xl font-display font-bold mb-6 tracking-wide">Cast</h3>
             <div className="flex gap-4 lg:gap-6 overflow-x-auto custom-scrollbar pb-6 -mx-6 px-6 lg:-mx-12 lg:px-12">
               {details.credits.cast.slice(0, 15).map((c) => (
-                <div key={c.id} className="flex-shrink-0 w-[100px] lg:w-[120px] text-center group cursor-default">
+                <div key={c.id} 
+                  onClick={() => router.push(`/person/${c.id}`)}
+                  className="flex-shrink-0 w-[100px] lg:w-[120px] text-center group cursor-pointer"
+                >
                   <div className="w-[100px] h-[100px] lg:w-[120px] lg:h-[120px] mx-auto mb-4 rounded-full overflow-hidden bg-[var(--color-surface-3)] border-[3px] border-[var(--color-surface-2)] transition-transform group-hover:scale-105 group-hover:border-[var(--color-brand)]">
                     {c.profile_path ? (
                       <img src={imgFallback(c.profile_path, "w185")} alt={c.name} className="w-full h-full object-cover" />

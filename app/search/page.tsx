@@ -55,7 +55,7 @@ export default function SearchPage() {
                         <p className="text-[var(--color-text-mute)] text-sm mb-5 font-body">
                             {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} found
                         </p>
-                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-3">
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-3">
                             {searchResults.map((item: MediaItem) => (
                                 <MediaCard key={`${item.id}-${item.media_type}`} item={item} inGrid />
                             ))}
