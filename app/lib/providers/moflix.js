@@ -1,16 +1,10 @@
 import { isTV } from "../tmdb";
+import { fetchData } from "../fetchData";
 
-const PROXY_URL = "/api/proxy";
 const MAIN_URL = "https://moflix-stream.xyz";
 
 const base64Encode = (str) => {
   return btoa(str).replace(/=+$/, ""); // Moflix often likes no-padding base64
-};
-
-const proxyFetch = async (targetUrl) => {
-  const res = await fetch(`${PROXY_URL}?url=${encodeURIComponent(targetUrl)}`);
-  if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
-  return res.json();
 };
 
 export const moflixProvider = {
@@ -27,10 +21,10 @@ export const moflixProvider = {
       const rawId = base64Encode(`tmdb|series|${item.id}`);
       
       try {
-        const titleData = await proxyFetch(`${MAIN_URL}/api/v1/titles/${rawId}?loader=titlePage`);
+        const titleData = await fetchData(`${MAIN_URL}/api/v1/titles/${rawId}?loader=titlePage`);
         const mediaId = titleData?.title?.id || rawId;
         
-        const epData = await proxyFetch(`${MAIN_URL}/api/v1/titles/${mediaId}/seasons/${season}/episodes/${episode}?loader=episodePage`);
+        const epData = await fetchData(`${MAIN_URL}/api/v1/titles/${mediaId}/seasons/${season}/episodes/${episode}?loader=episodePage`);
         
         const videos = epData.videos || epData.episode?.videos || [];
         return videos.map(v => ({
@@ -45,7 +39,7 @@ export const moflixProvider = {
     }
 
     try {
-      const data = await proxyFetch(`${MAIN_URL}/api/v1/titles/${pathId}?loader=titlePage`);
+      const data = await fetchData(`${MAIN_URL}/api/v1/titles/${pathId}?loader=titlePage`);
       const videos = data.videos || data.title?.videos || [];
       return videos.map(v => ({
         name: v.name || "Mirror",
