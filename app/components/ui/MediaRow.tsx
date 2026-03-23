@@ -47,7 +47,7 @@ export default function MediaRow({ title, icon, items = [], loading = false }: a
         >
           {loading
             ? Array.from({ length: 9 }, (_, i) => <SkeletonCard key={i} />)
-            : items.map((item) => (
+            : items.map((item:any) => (
               <MediaCard key={`${item.id}-${item.media_type}`} item={item} />
             ))}
         </div>
