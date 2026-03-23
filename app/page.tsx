@@ -2,7 +2,6 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import Hero from "@/components/ui/Hero";
-import GenreBar from "@/components/ui/GenreBar";
 import MediaRow from "@/components/ui/MediaRow";
 import ChannelRow from "@/components/ui/ChannelRow";
 import CategoryRow from "@/components/ui/CategoryRow";
@@ -31,38 +30,37 @@ export default function HomePage() {
       </Head>
 
       <Hero item={heroItem} />
-      <GenreBar />
 
       <div className="pb-24 pt-8 animate-fade-in" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
         {/* Priority: Continue Watching */}
         {mounted && !loading && !currentGenreId && continueWatching.length > 0 && (
-          <MediaRow title="Resume Playback" emoji="▶️" items={continueWatching} loading={false} />
+          <MediaRow title="Resume Playback" icon="RotateCcw" items={continueWatching} loading={false} />
         )}
 
         {/* Home Mix Section 1: Top Rows */}
         {loading
-          ? Array.from({ length: 2 }, (_, i) => <MediaRow key={i} title="" items={[]} loading={true} />)
+          ? Array.from({ length: 2 }, (_, i) => <MediaRow key={i} title="" items={[] as any} loading={true} />)
           : rows.slice(0, 2).map((row: any) => (
-            <MediaRow key={row.title} title={row.title} emoji={row.emoji} items={row.items} loading={false} />
+            <MediaRow key={row.title} title={row.title} icon={row.icon} items={row.items} loading={false} />
           ))
         }
 
         {/* Live TV Channels Row */}
-        {!currentGenreId && <ChannelRow title="Broadcast: Live Channels" emoji="📡" />}
+        {!currentGenreId && <ChannelRow title="Broadcast: Live Channels" icon="RadioTower" />}
 
         {/* Discovery: Genres */}
-        {!currentGenreId && <CategoryRow title="Explore by Category" emoji="📂" items={genreItems} type="categories" />}
-
+        {!currentGenreId && <CategoryRow title="Explore by Category" icon="LayoutGrid" items={genreItems} type="categories" />}
+ 
         {/* Discovery: Languages */}
-        {!currentGenreId && <CategoryRow title="Global Languages" emoji="🌐" items={languageItems} type="languages" />}
-
+        {!currentGenreId && <CategoryRow title="Global Languages" icon="Languages" items={languageItems} type="languages" />}
+ 
         {/* Favourites Section */}
         {mounted && !loading && !currentGenreId && favourites.length > 0 && (
-          <MediaRow title="Personal Collection" emoji="⭐" items={favourites} loading={false} />
+          <MediaRow title="Personal Collection" icon="Heart" items={favourites} loading={false} />
         )}
-
+ 
         {/* Discovery: Years */}
-        {!currentGenreId && <CategoryRow title="Released by Year" emoji="📅" items={yearItems} type="years" />}
+        {!currentGenreId && <CategoryRow title="Released by Year" icon="History" items={yearItems} type="years" />}
 
       </div>
     </>

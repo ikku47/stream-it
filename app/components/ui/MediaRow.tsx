@@ -1,11 +1,13 @@
 // components/ui/MediaRow.jsx
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import * as Icons from "lucide-react";
 import MediaCard from "../cards/MediaCard";
 import SkeletonCard from "../cards/SkeletonCard";
 
-export default function MediaRow({ title, emoji, items = [], loading = false }: MediaRowType) {
+export default function MediaRow({ title, icon, items = [], loading = false }: any) {
   const trackRef = useRef<HTMLDivElement>(null);
+  const Icon = (Icons as any)[icon || "Plus"];
 
   const scroll = (dir: number) => {
     if (!trackRef.current) return;
@@ -19,8 +21,8 @@ export default function MediaRow({ title, emoji, items = [], loading = false }: 
     <section className="mb-10">
       {/* Header */}
       <div className="flex items-center justify-between px-4 md:px-8 mb-3.5">
-        <h2 className="font-body text-lg md:text-xl font-semibold text-[var(--color-text)] flex items-center gap-2">
-          {emoji && <span className="text-base leading-none">{emoji}</span>}
+        <h2 className="font-body text-lg md:text-xl font-semibold text-[var(--color-text)] flex items-center gap-3">
+          {Icon && <Icon className="w-5 h-5 text-[var(--color-brand)]" />}
           {title}
         </h2>
         <button className="text-xs text-[var(--color-brand)] hover:text-[var(--color-brand-hover)] transition-colors font-semibold tracking-wider uppercase">

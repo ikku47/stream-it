@@ -1,12 +1,14 @@
 'use client';
 import { useIPTV } from "@/hooks/useIPTV";
 import ChannelCard from "../cards/ChannelCard";
-import { ChevronLeft, ChevronRight, Tv } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import * as Icons from "lucide-react";
 import { useRef } from "react";
 
-export default function ChannelRow({ title = "Live TV Channels", emoji = "📡" }) {
+export default function ChannelRow({ title = "Live TV Channels", icon = "RadioTower" }) {
   const { channels, loading } = useIPTV();
   const trackRef = useRef(null);
+  const Icon = Icons[icon || "Radio"];
 
   const scroll = (dir) => {
     if (!trackRef.current) return;
@@ -19,7 +21,7 @@ export default function ChannelRow({ title = "Live TV Channels", emoji = "📡" 
     <section className="mb-10">
       <div className="flex items-center justify-between px-4 md:px-8 mb-5">
         <h2 className="font-body text-lg md:text-xl font-semibold text-white flex items-center gap-3">
-          <span className="text-xl">{emoji}</span>
+          {Icon && <Icon className="w-5 h-5 md:w-6 md:h-6 text-[var(--color-brand)]" />}
           {title}
         </h2>
         <div className="flex items-center gap-1">

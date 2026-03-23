@@ -50,8 +50,8 @@ export function useRows(tab, genreId) {
           const items = (data.results || [])
             .filter((i) => i.poster_path)
             .map(normalizeItem);
-          return { title: r.title, emoji: r.emoji, items };
-        } catch { return { title: r.title, emoji: r.emoji, items: [] }; }
+          return { title: r.title, icon: r.icon, items };
+        } catch { return { title: r.title, icon: r.icon, items: [] }; }
       })
     ).then((results) => {
       if (dead) return;
