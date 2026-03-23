@@ -34,11 +34,11 @@ export default function FilterBar({
   searchQuery, setSearchQuery,
   onClear
 }: FilterBarProps) {
-  
+
   // Custom styled select component
   const Select = ({ value, onChange, options, placeholder, hidden }: any) => {
     if (hidden) return null;
-    
+
     return (
       <div className="relative">
         <select
@@ -62,22 +62,22 @@ export default function FilterBar({
     );
   };
 
-  const hasActiveFilters = 
-    (hiddenFilter !== "genre" && genre !== null) || 
-    (hiddenFilter !== "language" && language !== null) || 
+  const hasActiveFilters =
+    (hiddenFilter !== "genre" && genre !== null) ||
+    (hiddenFilter !== "language" && language !== null) ||
     (hiddenFilter !== "year" && year !== null) ||
     (searchQuery && searchQuery.trim().length > 0);
 
   return (
     <div className="sticky top-[64px] z-40 px-4 md:px-8 py-3 glass border-b border-[var(--color-border)] shadow-md animate-fade-down">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 max-w-7xl mx-auto">
-        
+
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto overflow-visible pb-1 md:pb-0">
           <div className="flex items-center gap-2 text-white/70 px-2 flex-shrink-0">
             <Filter className="w-4 h-4" />
             <span className="text-sm font-semibold uppercase tracking-wider hidden sm:inline-block">Filters</span>
           </div>
-          
+
           <div className="h-6 w-px bg-white/10 mx-1 hidden sm:block"></div>
 
           {/* Type Toggle */}
@@ -101,9 +101,9 @@ export default function FilterBar({
           {/* Search Input */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-            <input 
-              type="text" 
-              placeholder="Filter by title..." 
+            <input
+              type="text"
+              placeholder="Filter by title..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-[var(--color-surface-2)] border border-[var(--color-border)] text-white text-sm rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-[var(--color-brand)] transition-all hover:border-white/20 font-body w-full sm:w-[180px]"
@@ -111,32 +111,32 @@ export default function FilterBar({
           </div>
 
           {/* Dynamic Filters */}
-          <Select 
-            value={genre} 
-            onChange={setGenre} 
-            options={genres.filter((g) => g.id !== null)} 
-            placeholder="All Categories" 
-            hidden={hiddenFilter === "genre"} 
+          <Select
+            value={genre}
+            onChange={setGenre}
+            options={genres.filter((g) => g.id !== null)}
+            placeholder="All Categories"
+            hidden={hiddenFilter === "genre"}
           />
-          <Select 
-            value={language} 
-            onChange={setLanguage} 
-            options={languages} 
-            placeholder="All Languages" 
-            hidden={hiddenFilter === "language"} 
+          <Select
+            value={language}
+            onChange={setLanguage}
+            options={languages}
+            placeholder="All Languages"
+            hidden={hiddenFilter === "language"}
           />
-          <Select 
-            value={year} 
-            onChange={setYear} 
-            options={years.map((y) => ({id: y, name: String(y)}))} 
-            placeholder="All Years" 
-            hidden={hiddenFilter === "year"} 
+          <Select
+            value={year}
+            onChange={setYear}
+            options={years.map((y) => ({ id: y, name: String(y) }))}
+            placeholder="All Years"
+            hidden={hiddenFilter === "year"}
           />
         </div>
 
         {/* Clear Filters */}
         {hasActiveFilters && (
-          <button 
+          <button
             onClick={onClear}
             className="flex items-center gap-1.5 text-xs text-brand hover:text-white transition-colors bg-brand/10 hover:bg-brand/20 px-3 py-1.5 rounded-full flex-shrink-0 w-fit"
           >

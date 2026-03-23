@@ -144,7 +144,7 @@ export default function LiveTVPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] fixed bottom-0 left-0 right-0 bg-[var(--color-bg)] text-white overflow-hidden font-body">
+    <div className="flex flex-col h-[calc(100vh-64px)] md:h-screen fixed top-16 md:top-0 left-0 md:left-[80px] right-0 bg-[var(--color-bg)] text-white overflow-hidden font-body">
       
       {/* ─── HEADER ─── */}
       <header className="h-20 shrink-0 border-b border-white/5 flex items-center justify-between px-6 md:px-10 bg-[var(--color-bg)]/80 backdrop-blur-2xl z-20">

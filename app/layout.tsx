@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Outfit, JetBrains_Mono } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
+
 const display = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-display" })
 const body = Outfit({ subsets: ["latin"], variable: "--font-body" })
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })
@@ -40,7 +40,7 @@ export default function RootLayout({
         className={`${display.variable} ${body.variable} ${mono.variable} antialiased`}
       >
         <Navbar />
-        <main className="min-h-screen bg-[var(--color-bg)]">
+        <main className="min-h-screen bg-[var(--color-bg)] md:pl-[80px]">
           {children}
         </main>
         <PlayerOverlay />

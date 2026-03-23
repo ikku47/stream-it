@@ -38,20 +38,20 @@ export default function SelectionGrid({ title, items, onSelect, activeId }: Sele
                 isActive ? "shadow-lg shadow-brand/20 ring-1 ring-brand" : "hover:shadow-xl hover:shadow-black/40"
               ].join(" ")}
               style={{
-                background: isActive 
-                  ? "linear-gradient(135deg, rgba(249,115,22,0.15) 0%, rgba(249,115,22,0.05) 100%)" 
+                background: isActive
+                  ? "linear-gradient(135deg, rgba(249,115,22,0.15) 0%, rgba(249,115,22,0.05) 100%)"
                   : "var(--color-surface-2)",
                 border: isActive ? "1px solid var(--color-brand)" : "1px solid var(--color-border)"
               }}
             >
               {/* Background Glow on Hover */}
-              <div 
+              <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{
                   background: "radial-gradient(circle at top right, rgba(249,115,22,0.15), transparent 70%)"
                 }}
               />
-              
+
               <div className="relative flex items-center justify-between">
                 <span className={[
                   "font-body text-lg font-semibold tracking-wide transition-colors",
@@ -59,7 +59,7 @@ export default function SelectionGrid({ title, items, onSelect, activeId }: Sele
                 ].join(" ")}>
                   {item.name}
                 </span>
-                
+
                 <div className={[
                   "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300",
                   isActive ? "bg-brand text-white" : "bg-white/5 text-white/40 group-hover:bg-brand/20 group-hover:text-brand"
