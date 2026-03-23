@@ -2,7 +2,7 @@
 // components/player/PlayerOverlay.jsx
 import { useEffect, useState } from "react";
 import { ArrowLeft, Server, Loader2 } from "lucide-react";
-import { getTitle, isTV } from "../../lib/tmdb";
+import { getTitle, isTV, fetchWatchProviders, img, getProviderSearchUrl } from "../../lib/tmdb";
 import { getProvider, PROVIDERS } from "../../lib/providers";
 import useStore from "../../store/useStore";
 
@@ -11,6 +11,17 @@ export default function PlayerOverlay() {
   const [servers, setServers] = useState([]);
   const [activeServer, setActiveServer] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [officialInfo, setOfficialInfo] = useState({ link: null, flatrate: [] });
+
+  useEffect(() => {
+    if (!playerItem) return;
+    const fetchOfficial = async () => {
+      const type = isTV(playerItem) ? 'tv' : 'movie';
+      const results = await fetchWatchProviders(playerItem.id, type);
+      setOfficialInfo(results);
+    };
+    fetchOfficial();
+  }, [playerItem]);
 
   useEffect(() => {
     if (playerItem) {
@@ -91,6 +102,31 @@ export default function PlayerOverlay() {
         >
           {displayTitle}
         </span>
+
+        {/* Official Providers (Badges) */}
+        {officialInfo.flatrate?.length > 0 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar ml-2 max-w-[60px] md:max-w-none">
+            {officialInfo.flatrate.map((p) => (
+              <a
+                key={p.provider_id}
+                href={getProviderSearchUrl(p, title)}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`${p.provider_name} (Search on Platform)`}
+                className="flex items-center gap-1 px-1.5 py-1 rounded-lg bg-white/5 border border-white/10 flex-shrink-0 hover:bg-white/15 transition-all hover:scale-105 active:scale-95"
+              >
+                <img
+                  src={img(p.logo_path, "w92")}
+                  alt={p.provider_name}
+                  className="w-3.5 h-3.5 rounded-sm object-contain"
+                />
+                <span className="hidden md:inline text-[10px] font-semibold text-white/50 whitespace-nowrap">
+                  {p.provider_name}
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
 
         {/* Source selector (Provider) */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 max-w-[200px] md:max-w-[300px]">

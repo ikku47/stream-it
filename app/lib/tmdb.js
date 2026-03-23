@@ -20,6 +20,22 @@ export async function tmdb(endpoint, params = {}) {
   return res.json();
 }
 
+export async function fetchWatchProviders(id, type) {
+  try {
+    const data = await tmdb(`/${type}/${id}/watch/providers`);
+    const results = data.results || {};
+    // Prioritize US, then GB, then anything available
+    const regional = results.US || results.GB || Object.values(results)[0] || {};
+    console.log(results)
+    return {
+      link: regional.link,
+      flatrate: regional.flatrate || []
+    };
+  } catch {
+    return { link: null, flatrate: [] };
+  }
+}
+
 export const scoreColor = (s) =>
   s >= 7.5 ? "var(--color-score-high)"
     : s >= 6 ? "var(--color-score-mid)"
@@ -113,4 +129,27 @@ export const LANGUAGES = [
 
 const currentYear = new Date().getFullYear();
 export const YEARS = Array.from({ length: currentYear - 1980 + 1 }, (_, i) => currentYear - i);
+
+export const getProviderSearchUrl = (provider, title) => {
+  const q = encodeURIComponent(title);
+  const id = provider.provider_id;
+
+  // Mapping of TMDB provider IDs to search/base URLs
+  const searchMap = {
+    8: `https://www.netflix.com/search?q=${q}`,            // Netflix
+    337: `https://www.disneyplus.com/search?q=${q}`,        // Disney+
+    350: `https://tv.apple.com/search?term=${q}`,           // Apple TV+
+    119: `https://www.amazon.com/s?k=${q}&i=instant-video`,  // Amazon Prime
+    15: `https://www.hulu.com/search?q=${q}`,              // Hulu
+    384: `https://proweb.max.com/search?q=${q}`,            // HBO Max / Max
+    2: `https://tv.apple.com/search?term=${q}`,           // Apple TV (iTunes)
+    10: `https://www.amazon.com/s?k=${q}&i=instant-video`,  // Amazon Video
+    192: `https://www.youtube.com/results?search_query=${q}`, // YouTube
+    300: `https://www.paramountplus.com/search/?q=${q}`,    // Paramount+
+    210: `https://www.sky.com/search?q=${q}`,               // Sky
+    444: `https://viaplay.com/search?query=${q}`,             // Viaplay
+  };
+
+  return searchMap[id] || `https://www.google.com/search?q=watch+${q}+on+${encodeURIComponent(provider.provider_name)}`;
+};
 
