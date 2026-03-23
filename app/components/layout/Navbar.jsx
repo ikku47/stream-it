@@ -2,9 +2,9 @@
 // components/layout/Navbar.jsx
 import { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { 
-  Search, X, Film, Clapperboard, Menu, 
-  Home, Tv, Radio, TrendingUp, LayoutGrid, Languages, Calendar 
+import {
+  Search, X, Film, Clapperboard, Menu, Heart,
+  Home, Tv, Radio, TrendingUp, LayoutGrid, Languages, Calendar
 } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useGenreMap } from "@/hooks/useTMDB";
@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { label: "Categories", href: "/categories", icon: LayoutGrid },
   { label: "Languages", href: "/languages", icon: Languages },
   { label: "Years", href: "/years", icon: Calendar },
+  { label: "Favourites", href: "/favourites", icon: Heart },
 ];
 
 export default function Navbar() {
@@ -89,7 +90,7 @@ export default function Navbar() {
             const active = pathname === l.href;
             const Icon = l.icon;
             return (
-              <li key={l.href} className="w-full flex justify-center">
+              <li key={l.href} className="w-full flex justify-center cursor-pointer">
                 <button
                   onClick={() => router.push(l.href)}
                   title={l.label}
@@ -116,38 +117,38 @@ export default function Navbar() {
 
         {/* Bottom Actions */}
         <div className="mt-auto flex flex-col items-center gap-4">
-           <button
-             onClick={toggleSearch}
-             aria-label="Toggle search"
-             className="w-12 h-12 rounded-xl flex items-center justify-center text-white/30 hover:text-white hover:bg-white/5 transition-all"
-           >
-             {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
-           </button>
+          <button
+            onClick={toggleSearch}
+            aria-label="Toggle search"
+            className="w-12 h-12 rounded-xl flex items-center justify-center text-white/30 hover:text-white hover:bg-white/5 transition-all"
+          >
+            {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
+          </button>
         </div>
       </aside>
 
       {/* Floating Search Bar (Desktop) When Active */}
       {searchOpen && (
         <div className="fixed top-8 left-[100px] right-8 z-[60] animate-fade-in hidden md:block">
-           <div className="glass max-w-2xl mx-auto rounded-2xl flex items-center gap-4 px-6 py-4 shadow-2xl shadow-black/80">
-              <Search className="w-5 h-5 text-white/20" />
-              <input
-                ref={inputRef}
-                type="text"
-                value={searchQuery}
-                onKeyDown={handleKeyDown}
-                onChange={handleSearch}
-                autoFocus
-                placeholder="Search for movies, actors, channels..."
-                className="bg-transparent flex-1 text-lg text-white font-medium outline-none placeholder-white/10"
-              />
-              <button 
-                onClick={() => setSearchOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
-                >
-                <X className="w-4 h-4 text-white/40" />
-              </button>
-           </div>
+          <div className="glass max-w-2xl mx-auto rounded-2xl flex items-center gap-4 px-6 py-4 shadow-2xl shadow-black/80">
+            <Search className="w-5 h-5 text-white/20" />
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchQuery}
+              onKeyDown={handleKeyDown}
+              onChange={handleSearch}
+              autoFocus
+              placeholder="Search for movies, actors, channels..."
+              className="bg-transparent flex-1 text-lg text-white font-medium outline-none placeholder-white/10"
+            />
+            <button
+              onClick={() => setSearchOpen(false)}
+              className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+            >
+              <X className="w-4 h-4 text-white/40" />
+            </button>
+          </div>
         </div>
       )}
 
@@ -172,58 +173,58 @@ export default function Navbar() {
         </button>
 
         <div className="flex items-center gap-2">
-            <button
-              onClick={toggleSearch}
-              className="w-10 h-10 rounded-full flex items-center justify-center text-white/60 hover:text-white transition-all"
-            >
-              <Search className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(true)}
-              className="w-10 h-10 flex items-center justify-center text-white/80 hover:text-white transition-colors"
-              aria-label="Open menu"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+          <button
+            onClick={toggleSearch}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-white/60 hover:text-white transition-all"
+          >
+            <Search className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="w-10 h-10 flex items-center justify-center text-white/80 hover:text-white transition-colors"
+            aria-label="Open menu"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
         </div>
       </nav>
 
       {/* Mobile Sidebar (Menu Overlay) */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex flex-col p-8 md:hidden">
-            <div className="flex items-center justify-between mb-12">
-               <span className="font-display text-3xl text-white">Menu</span>
-               <button
-                 onClick={() => setMobileMenuOpen(false)}
-                 className="w-12 h-12 flex items-center justify-center text-white/50 bg-white/5 rounded-full"
-               >
-                 <X className="w-6 h-6" />
-               </button>
-            </div>
-            <div className="flex flex-col gap-6 overflow-y-auto custom-scrollbar pr-4">
-              {NAV_LINKS.map((l, i) => {
-                const active = pathname === l.href;
-                const Icon = l.icon;
-                return (
-                  <button
-                    key={l.href}
-                    onClick={() => {
-                        setMobileMenuOpen(false);
-                        router.push(l.href);
-                    }}
-                    className={[
-                      "flex items-center gap-5 text-left transition-all duration-300 py-2",
-                      active ? "text-[var(--color-brand)]" : "text-white/70"
-                    ].join(" ")}
-                  >
-                    <div className={["w-10 h-10 rounded-xl flex items-center justify-center", active ? "bg-[var(--color-brand)] text-white" : "bg-white/5 text-white/40"].join(" ")}>
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-2xl font-display tracking-wide">{l.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+          <div className="flex items-center justify-between mb-12">
+            <span className="font-display text-3xl text-white">Menu</span>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-12 h-12 flex items-center justify-center text-white/50 bg-white/5 rounded-full"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          <div className="flex flex-col gap-6 overflow-y-auto custom-scrollbar pr-4">
+            {NAV_LINKS.map((l, i) => {
+              const active = pathname === l.href;
+              const Icon = l.icon;
+              return (
+                <button
+                  key={l.href}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    router.push(l.href);
+                  }}
+                  className={[
+                    "flex items-center gap-5 text-left transition-all duration-300 py-2",
+                    active ? "text-[var(--color-brand)]" : "text-white/70"
+                  ].join(" ")}
+                >
+                  <div className={["w-10 h-10 rounded-xl flex items-center justify-center", active ? "bg-[var(--color-brand)] text-white" : "bg-white/5 text-white/40"].join(" ")}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-2xl font-display tracking-wide">{l.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
     </>
