@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, Server, Loader2 } from "lucide-react";
 import { getTitle, isTV } from "../../lib/tmdb";
-import { getProvider } from "../../lib/providers";
+import { getProvider, PROVIDERS } from "../../lib/providers";
 import useStore from "../../store/useStore";
 
 export default function PlayerOverlay() {
-  const { playerItem, closePlayer, selectedSeason, selectedEpisode, provider: providerId, addToContinueWatching } = useStore();
+  const { playerItem, closePlayer, selectedSeason, selectedEpisode, provider: providerId, setProvider, addToContinueWatching } = useStore();
   const [servers, setServers] = useState([]);
   const [activeServer, setActiveServer] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -92,10 +92,25 @@ export default function PlayerOverlay() {
           {displayTitle}
         </span>
 
-        {/* Server Selector */}
+        {/* Source selector (Provider) */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 max-w-[200px] md:max-w-[300px]">
+          <Server className="w-3.5 h-3.5 text-white/40 flex-shrink-0" />
+          <select
+            className="bg-transparent text-white/80 text-[12px] font-medium outline-none cursor-pointer w-full"
+            value={providerId}
+            onChange={(e) => setProvider(e.target.value)}
+          >
+            {PROVIDERS.map((p) => (
+              <option key={p.id} value={p.id} className="bg-[#111] text-white">
+                {p.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Server Selector (Mirror within provider) */}
         {servers.length > 1 && (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 max-w-[200px] md:max-w-[300px]">
-            <Server className="w-3.5 h-3.5 text-white/40 flex-shrink-0" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 max-w-[150px] md:max-w-[200px]">
             <select
               className="bg-transparent text-white/80 text-[12px] font-medium outline-none cursor-pointer w-full"
               value={activeServer?.id || activeServer?.url}
@@ -106,7 +121,7 @@ export default function PlayerOverlay() {
             >
               {servers.map((s, idx) => (
                 <option key={s.id || s.url || idx} value={s.id || s.url} className="bg-[#111] text-white">
-                  {s.name}
+                  Server {idx + 1}: {s.name}
                 </option>
               ))}
             </select>

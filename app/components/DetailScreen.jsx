@@ -92,35 +92,47 @@ export default function DetailScreen({ id, type }) {
 
         {/* Header Block */}
         <div className="mb-10 animate-fade-up">
-          <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl text-white leading-[1.1] mb-4 tracking-wide drop-shadow-2xl">
+          {/* Badge */}
+          <div
+            className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.12em] uppercase px-3 py-1.5 rounded-full mb-5"
+            style={{
+              background: "var(--color-brand-dim)",
+              border: "1px solid rgba(249,115,22,0.3)",
+              color: "var(--color-brand-hover)",
+            }}
+          >
+            {tv ? <Tv className="w-3 h-3" /> : <Film className="w-3 h-3" />}
+            {tv ? "TV Series" : "Feature Film"}
+          </div>
+
+          <h1 className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-white leading-[1.1] mb-4 tracking-wide drop-shadow-2xl">
             {title}
           </h1>
 
           {/* Meta row */}
-          <div className="flex flex-wrap items-center gap-4 lg:gap-6 mb-6">
-            <span className="font-bold font-mono text-base lg:text-lg flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/40 backdrop-blur-sm shadow-inner" style={{ color: scoreC }}>
-              <Star className="w-5 h-5 fill-current" />
-              {score}
+          <div className="flex items-center gap-4 mb-5 text-sm">
+            <span className="font-bold font-mono tabular-nums flex items-center gap-1" style={{ color: scoreC }}>
+              ★ {score}
             </span>
-            {year && <span className="text-white/80 text-base lg:text-lg font-bold tracking-wide">{year}</span>}
+            {year && <span className="text-white/55 font-body">{year}</span>}
             <span
-              className="px-3 py-1 rounded-md text-xs lg:text-sm font-bold tracking-widest uppercase"
-              style={{ background: "var(--color-surface-3)", color: "white" }}
+              className="px-2.5 py-0.5 rounded-md text-xs font-semibold font-body"
+              style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)" }}
             >
               {item.adult ? "18+" : tv ? "TV-14" : "PG-13"}
             </span>
             {details?.runtime > 0 && !tv && (
-              <span className="text-white/60 text-sm font-mono flex items-center gap-1">
+              <span className="text-white/55 text-[13px] font-body bg-white/5 px-2 py-0.5 rounded border border-white/5">
                 {details.runtime} min
               </span>
             )}
             {details?.episode_run_time?.[0] > 0 && tv && (
-              <span className="text-white/60 text-sm font-mono">
+              <span className="text-white/55 text-[13px] font-body bg-white/5 px-2 py-0.5 rounded border border-white/5">
                 {details.episode_run_time[0]}m / ep
               </span>
             )}
             {details?.number_of_episodes > 0 && tv && (
-              <span className="text-white/60 text-sm font-mono">
+              <span className="text-white/55 text-[13px] font-body bg-white/5 px-2 py-0.5 rounded border border-white/5">
                 {details.number_of_episodes} episodes
               </span>
             )}
@@ -128,12 +140,12 @@ export default function DetailScreen({ id, type }) {
 
           {/* Genre chips */}
           {genres.length > 0 && (
-            <div className="flex flex-wrap gap-2.5 mb-8">
+            <div className="flex flex-wrap gap-2 mb-8">
               {genres.map((g) => (
                 <span
                   key={g.id || g.name}
-                  className="px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase"
-                  style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.7)", border: "1px solid rgba(255,255,255,0.1)" }}
+                  className="px-3 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase"
+                  style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.08)" }}
                 >
                   {g.name}
                 </span>
@@ -142,33 +154,33 @@ export default function DetailScreen({ id, type }) {
           )}
 
           {/* Overview */}
-          <p className="text-white/70 text-[16px] lg:text-[18px] leading-relaxed mb-10 font-body max-w-4xl">
+          <p className="text-white/60 text-sm md:text-[15px] leading-relaxed mb-7 font-body max-w-2xl line-clamp-4">
             {details?.overview || item.overview || "No description available."}
           </p>
 
           {/* Actions Array */}
-          <div className="flex flex-wrap items-center gap-4 mb-16">
+          <div className="flex flex-wrap items-center gap-3 mb-16">
             <button
               onClick={() => handlePlay()}
-              className="flex items-center gap-3 px-10 py-4 rounded-xl font-bold text-base text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl shadow-brand/20"
-              style={{ background: "var(--color-brand)" }}
+              className="flex items-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm text-white transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
+              style={{ background: "var(--color-brand)", boxShadow: "0 8px 24px rgba(249,115,22,0.35)" }}
             >
-              <Play className="w-6 h-6 fill-white" />
+              <Play className="w-4 h-4 fill-white" />
               {tv ? `Play S${selectedSeason} E${selectedEpisode}` : "Play Now"}
             </button>
             <button
               onClick={handleTrailer}
-              className="flex items-center gap-3 px-8 py-4 rounded-xl font-bold text-base text-white transition-all duration-300 hover:scale-105 active:scale-95 bg-white/5 hover:bg-white/10"
+              className="glass flex items-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm text-white transition-all duration-200 hover:bg-white/10 hover:scale-105 active:scale-95"
             >
-              <Youtube className="w-6 h-6" />
+              <Youtube className="w-4 h-4" />
               Trailer
             </button>
             <button
               onClick={() => toggleFavourite(item)}
-              className={`flex items-center gap-3 px-8 py-4 rounded-xl font-bold text-base transition-all duration-300 hover:scale-105 active:scale-95 ${isFav ? 'text-pink-500 bg-pink-500/10 hover:bg-pink-500/20' : 'text-white/70 bg-white/5 hover:bg-white/10 hover:text-white'}`}
+              className={`glass flex items-center justify-center w-[44px] h-[44px] rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 ${isFav ? 'bg-pink-500/20 text-pink-500 border border-pink-500/30' : 'text-white hover:bg-white/10'}`}
+              aria-label={isFav ? "Remove from Favourites" : "Add to Favourites"}
             >
-              <Heart className={`w-6 h-6 ${isFav ? 'fill-current text-pink-500' : ''}`} />
-              {isFav ? 'Favourited' : 'Favourite'}
+              <Heart className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
             </button>
           </div>
         </div>

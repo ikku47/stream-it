@@ -2,10 +2,9 @@
 // components/layout/Navbar.jsx
 import { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Search, X, Film, Clapperboard, Menu, Server } from "lucide-react";
+import { Search, X, Film, Clapperboard, Menu } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useGenreMap } from "@/hooks/useTMDB";
-import { PROVIDERS } from "@/lib/providers";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -22,7 +21,7 @@ export default function Navbar() {
   useGenreMap(); // preload genre map globally
   const router = useRouter();
   const pathname = usePathname();
-  const { searchOpen, setSearchOpen, setSearchQuery, searchQuery, provider, setProvider } = useStore();
+  const { searchOpen, setSearchOpen, setSearchQuery, searchQuery } = useStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const inputRef = useRef(null);
@@ -109,21 +108,6 @@ export default function Navbar() {
 
       {/* Right: search + provider */}
       <div className="flex items-center gap-3">
-        {/* Provider switch (Desktop) */}
-        <div className="hidden md:flex items-center gap-2 mr-2">
-          <Server className="w-4 h-4 text-white/40" />
-          <select
-            value={provider}
-            onChange={(e) => setProvider(e.target.value)}
-            className="bg-transparent text-sm text-white/70 font-body outline-none appearance-none cursor-pointer hover:text-white transition-colors"
-          >
-            {PROVIDERS.map((p) => (
-              <option key={p.id} value={p.id} className="bg-[#111] text-white">
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </div>
 
         {/* Search bar */}
         <div className="flex items-center gap-2">
@@ -202,23 +186,6 @@ export default function Navbar() {
               );
             })}
             
-            <div
-              className="mt-8 flex items-center gap-3 text-white/70 animate-fade-in"
-              style={{ animationFillMode: "both", animationDelay: `${NAV_LINKS.length * 50}ms` }}
-            >
-              <Server className="w-6 h-6" />
-              <select
-                value={provider}
-                onChange={(e) => setProvider(e.target.value)}
-                className="bg-transparent text-2xl font-display outline-none appearance-none cursor-pointer hover:text-white transition-colors flex-1"
-              >
-                {PROVIDERS.map((p) => (
-                  <option key={p.id} value={p.id} className="bg-[#111] text-white text-base font-body">
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
         </div>
       )}
