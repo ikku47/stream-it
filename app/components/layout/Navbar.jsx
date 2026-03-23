@@ -14,7 +14,6 @@ const NAV_LINKS = [
   { label: "Movies", href: "/movies", icon: Film },
   { label: "TV Shows", href: "/tv", icon: Tv },
   { label: "Live TV", href: "/live-tv", icon: Radio },
-  { label: "Trending", href: "/trending", icon: TrendingUp },
   { label: "Categories", href: "/categories", icon: LayoutGrid },
   { label: "Languages", href: "/languages", icon: Languages },
   { label: "Years", href: "/years", icon: Calendar },

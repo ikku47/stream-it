@@ -197,10 +197,10 @@ export default function LivePlayer({ channel, onClose }) {
              style={{ background: 'radial-gradient(circle, transparent 20%, rgba(0,0,0,0.4) 100%), linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%), linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 30%)' }} />
 
         {/* Top Bar - Clock & Close */}
-        <div className={`absolute top-0 left-0 right-0 p-8 flex items-start justify-between z-50 transition-all duration-500 transform ${showControls ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'}`}>
+        <div className={`absolute top-0 left-0 right-0 p-4 md:p-8 flex items-start justify-between z-50 transition-all duration-500 transform ${showControls ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'}`}>
           <div className="flex flex-col gap-1 items-start">
-             <div className="text-white/40 text-[10px] font-mono uppercase tracking-[0.3em] bg-black/40 backdrop-blur-md px-3 py-1 rounded-md border border-white/5">
-                Streaming Protocol: {hlsSupported ? 'HLS.js' : 'Native'}
+             <div className="text-white/40 text-[8px] md:text-[10px] font-mono uppercase tracking-[0.2em] md:tracking-[0.3em] bg-black/40 backdrop-blur-md px-2 md:px-3 py-1 rounded-md border border-white/5">
+                {hlsSupported ? 'HLS' : 'Native'}
              </div>
           </div>
 
@@ -217,9 +217,9 @@ export default function LivePlayer({ channel, onClose }) {
              
              <button 
                 onClick={onClose}
-                className="w-12 h-12 rounded-full glass-light hover:bg-white/20 text-white flex items-center justify-center transition-all hover:scale-110 active:scale-90 border border-white/10 shadow-2xl"
+                className="w-10 h-10 md:w-12 md:h-12 rounded-full glass-light hover:bg-white/20 text-white flex items-center justify-center transition-all hover:scale-110 active:scale-90 border border-white/10 shadow-2xl"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 md:w-6 md:h-6" />
               </button>
           </div>
         </div>
@@ -272,31 +272,30 @@ export default function LivePlayer({ channel, onClose }) {
         )}
 
         {/* Bottom Left - Channel Info (Live TV Style) */}
-        <div className={`absolute bottom-0 left-0 p-10 md:p-14 z-50 flex items-end gap-6 transition-all duration-700 transform ${showControls ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
-           <div className="relative group">
-              <div className="absolute -inset-4 bg-[var(--color-brand)] rounded-3xl opacity-20 blur-2xl group-hover:opacity-40 transition-opacity" />
-              <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-white/5 backdrop-blur-2xl border border-white/10 flex items-center justify-center p-6 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform">
+        <div className={`absolute bottom-0 left-0 p-6 md:p-14 z-50 flex items-center md:items-end gap-3 md:gap-6 transition-all duration-700 transform ${showControls ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
+           <div className="relative group flex-shrink-0">
+              <div className="absolute -inset-2 md:-inset-4 bg-[var(--color-brand)] rounded-2xl md:rounded-3xl opacity-20 blur-xl md:blur-2xl group-hover:opacity-40 transition-opacity" />
+              <div className="relative w-14 h-14 md:w-32 md:h-32 rounded-2xl md:rounded-3xl bg-white/5 backdrop-blur-2xl border border-white/10 flex items-center justify-center p-3 md:p-6 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform">
                 {channel.logo ? (
                   <img src={channel.logo} alt="" className="w-full h-full object-contain drop-shadow-lg" />
                 ) : (
-                  <Tv className="w-12 h-12 text-white/20" />
+                  <Tv className="w-6 h-6 md:w-12 md:h-12 text-white/20" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
               </div>
            </div>
-
-           <div className="flex flex-col gap-2 mb-2">
-              <div className="flex items-center gap-3">
-                 <div className="px-3 py-1 bg-red-600 rounded-md shadow-lg shadow-red-600/30 flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse shadow-[0_0_8px_white]" />
-                    <span className="text-[10px] font-black text-white uppercase tracking-tighter">LIVE</span>
+ 
+           <div className="flex flex-col gap-1 md:gap-2 mb-1 md:mb-2 min-w-0">
+              <div className="flex items-center gap-2 md:gap-3">
+                 <div className="px-2 py-0.5 md:px-3 md:py-1 bg-red-600 rounded md:rounded-md shadow-lg shadow-red-600/30 flex items-center gap-1 md:gap-2">
+                    <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-white rounded-full animate-pulse shadow-[0_0_8px_white]" />
+                    <span className="text-[8px] md:text-[10px] font-black text-white uppercase tracking-tighter">LIVE</span>
                  </div>
-                 <span className="text-white/40 text-[10px] font-mono tracking-[0.2em] font-bold uppercase">{channel.group?.split(';')[0] || 'Unknown Group'}</span>
+                 <span className="text-white/40 text-[8px] md:text-[10px] font-mono tracking-[0.1em] md:tracking-[0.2em] font-bold uppercase truncate">{channel.group?.split(';')[0] || 'Unknown'}</span>
               </div>
-              <h2 className="text-white text-4xl md:text-6xl font-display leading-none tracking-wide drop-shadow-2xl">
+              <h2 className="text-white text-2xl md:text-6xl font-display leading-none tracking-wide drop-shadow-2xl truncate">
                  {channel.name}
               </h2>
-              <div className="flex items-center gap-4 text-white/40 text-xs font-mono">
+              <div className="hidden md:flex items-center gap-4 text-white/40 text-xs font-mono">
                  <span className="flex items-center gap-1.5"><Server className="w-3 h-3 text-[var(--color-brand)]" /> M3U8 STREAM</span>
                  <span className="w-1 h-1 rounded-full bg-white/20" />
                  <span>HD BROADCAST</span>
@@ -305,36 +304,36 @@ export default function LivePlayer({ channel, onClose }) {
         </div>
 
         {/* Bottom Right - Playback Controls */}
-        <div className={`absolute bottom-0 right-0 p-10 md:p-14 z-50 flex items-center gap-4 transition-all duration-700 transform ${showControls ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
-           <div className="flex items-center gap-2 bg-black/40 backdrop-blur-2xl px-4 py-2 rounded-2xl border border-white/5 shadow-2xl">
+        <div className={`absolute bottom-0 right-0 p-6 md:p-14 z-50 flex items-center gap-4 transition-all duration-700 transform ${showControls ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
+           <div className="flex items-center gap-1 md:gap-2 bg-black/60 md:bg-black/40 backdrop-blur-2xl px-2 md:px-4 py-1 md:py-2 rounded-xl md:rounded-2xl border border-white/5 shadow-2xl">
               <button 
                 onClick={togglePlay}
-                className="w-12 h-12 rounded-xl text-white hover:text-[var(--color-brand)] transition-all hover:bg-white/5 flex items-center justify-center"
+                className="w-10 h-10 md:w-12 md:h-12 rounded-xl text-white hover:text-[var(--color-brand)] transition-all hover:bg-white/5 flex items-center justify-center"
               >
-                {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current" />}
+                {isPlaying ? <Pause className="w-5 h-5 md:w-6 md:h-6 fill-current" /> : <Play className="w-5 h-5 md:w-6 md:h-6 fill-current" />}
               </button>
               
-              <div className="w-px h-6 bg-white/10 mx-1" />
-
-              <div className="flex items-center gap-2 px-2 group/volume">
+              <div className="w-px h-5 md:h-6 bg-white/10 mx-0.5 md:mx-1" />
+ 
+              <div className="flex items-center gap-1 md:gap-2 px-1 md:px-2 group/volume">
                 <button 
                   onClick={toggleMute}
-                  className="w-10 h-10 rounded-xl text-white/70 hover:text-white transition-all flex items-center justify-center"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-xl text-white/70 hover:text-white transition-all flex items-center justify-center"
                 >
-                  {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                  {isMuted ? <VolumeX className="w-4 h-4 md:w-5 md:h-5" /> : <Volume2 className="w-4 h-4 md:w-5 md:h-5" />}
                 </button>
-                <div className="w-0 group-hover/volume:w-20 transition-all duration-500 overflow-hidden h-1 bg-white/10 rounded-full relative">
+                <div className="hidden md:block w-0 group-hover/volume:w-20 transition-all duration-500 overflow-hidden h-1 bg-white/10 rounded-full relative">
                   <div className={`absolute inset-0 bg-[var(--color-brand)] rounded-full ${isMuted ? 'w-0' : 'w-full'}`} />
                 </div>
               </div>
-
-              <div className="w-px h-6 bg-white/10 mx-1" />
-
+ 
+              <div className="w-px h-5 md:h-6 bg-white/10 mx-0.5 md:mx-1" />
+ 
               <button 
                 onClick={toggleFullscreen}
-                className="w-12 h-12 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center"
+                className="w-10 h-10 md:w-12 md:h-12 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center"
               >
-                <Maximize className="w-5 h-5" />
+                <Maximize className="w-4 h-4 md:w-5 md:h-5" />
               </button>
            </div>
         </div>
