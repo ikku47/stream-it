@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Play, Youtube, Star, Tv, Film, Heart, ArrowLeft } from "lucide-react";
 import { img, imgFallback, scoreColor, getTitle, getYear, isTV, normalizeItem } from "../lib/tmdb";
+import { getDetailUrl, getPersonUrl } from "../lib/navigation";
 import { useItemDetails, fetchTrailer } from "../hooks/useTMDB";
 import useStore from "../store/useStore";
 
@@ -192,7 +193,7 @@ export default function DetailScreen({ id, type }) {
             <div className="flex gap-4 lg:gap-6 overflow-x-auto custom-scrollbar pb-6 -mx-6 px-6 lg:-mx-12 lg:px-12">
               {details.credits.cast.slice(0, 15).map((c) => (
                 <div key={c.id} 
-                  onClick={() => router.push(`/person/${c.id}`)}
+                  onClick={() => router.push(getPersonUrl(c.id))}
                   className="flex-shrink-0 w-[100px] lg:w-[120px] text-center group cursor-pointer"
                 >
                   <div className="w-[100px] h-[100px] lg:w-[120px] lg:h-[120px] mx-auto mb-4 rounded-full overflow-hidden bg-[var(--color-surface-3)] border-[3px] border-[var(--color-surface-2)] transition-transform group-hover:scale-105 group-hover:border-[var(--color-brand)]">
@@ -292,7 +293,7 @@ export default function DetailScreen({ id, type }) {
               {details.similar.results.filter(r => r.poster_path).slice(0, 15).map((s) => (
                 <div key={s.id} onClick={() => {
                   selectMedia(normalizeItem(s));
-                  router.push(`/${type}/${s.id}`);
+                  router.push(getDetailUrl(type, s.id));
                 }} className="flex-shrink-0 w-[140px] lg:w-[160px] cursor-pointer group">
                   <div className="w-full aspect-[2/3] rounded-2xl overflow-hidden mb-3 relative shadow-lg">
                     <img src={img(s.poster_path, "w342")} alt={getTitle(s)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />

@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation";
 import { Play, Star, Tv, Film } from "lucide-react";
 import { imgFallback, scoreColor, getTitle, getYear, isTV } from "../../lib/tmdb";
 import useStore from "../../store/useStore";
+import { getDetailUrl } from "../../lib/navigation";
 
 export default function MediaCard({ item, inGrid = false }) {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function MediaCard({ item, inGrid = false }) {
 
   const handleNavigate = () => {
     selectMedia(norm);
-    router.push(`/${type}/${item.id}`);
+    router.push(getDetailUrl(type, item.id));
   };
 
   return (

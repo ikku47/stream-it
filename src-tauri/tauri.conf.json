@@ -2,12 +2,12 @@
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "stream-it",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.streamit.app",
   "build": {
     "frontendDist": "../out",
     "devUrl": "http://localhost:3000",
     "beforeDevCommand": "TAURI_ENV=true npm run dev",
-    "beforeBuildCommand": "TAURI_ENV=true npm run build"
+    "beforeBuildCommand": "mv app/api /tmp/api-bak && mv app/manifest.ts /tmp/manifest-bak && mv app/movie /tmp/movie-bak && mv app/tv/[...slug] /tmp/tv-slug-bak && mv app/person/[...slug] /tmp/person-slug-bak && TAURI_ENV=true npm run build ; mv /tmp/api-bak app/api ; mv /tmp/manifest-bak app/manifest.ts ; mv /tmp/movie-bak app/movie ; mv /tmp/tv-slug-bak app/tv/[...slug] ; mv /tmp/person-slug-bak app/person/[...slug]"
   },
   "app": {
     "windows": [
