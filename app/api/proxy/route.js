@@ -103,18 +103,27 @@ const hexToBytes = (hex) => {
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const targetUrl = searchParams.get('url');
-  const videoType = searchParams.get('type') || 'movie';
-  const language = searchParams.get('lang') || 'en';
-  const season = searchParams.get('season');
-  const episode = searchParams.get('episode');
-  const tmdbId = searchParams.get('tmdbId');
-  const imdbId = searchParams.get('imdbId');
-  const title = searchParams.get('title');
-  const year = searchParams.get('year');
 
   if (!targetUrl) {
     return NextResponse.json({ error: 'Missing url parameter' }, { status: 400 });
   }
+
+  // Support extracting parameters from the URL itself as a fallback
+  let targetParams;
+  try {
+    targetParams = new URL(targetUrl).searchParams;
+  } catch (e) {
+    targetParams = new URLSearchParams();
+  }
+
+  const videoType = searchParams.get('type') || targetParams.get('type') || 'movie';
+  const language = searchParams.get('lang') || targetParams.get('lang') || 'en';
+  const season = searchParams.get('season') || targetParams.get('season');
+  const episode = searchParams.get('episode') || targetParams.get('episode');
+  const tmdbId = searchParams.get('tmdbId') || targetParams.get('tmdbId');
+  const imdbId = searchParams.get('imdbId') || targetParams.get('imdbId');
+  const title = searchParams.get('title') || targetParams.get('title');
+  const year = searchParams.get('year') || targetParams.get('year');
 
   try {
     const result = await extractVideo(targetUrl, videoType, language, {
@@ -3385,3 +3394,4 @@ async function extractDefault(url) {
 
   throw new Error('Could not extract video from URL');
 }
+

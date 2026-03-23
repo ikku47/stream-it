@@ -156,7 +156,7 @@ export const twoEmbedProvider = createProvider(
   "TwoEmbed",
   async (item, season, episode, meta, tv) => {
     if (tv) {
-      return `https://www.2embed.cc/embedtv/${item.id}&s=${season}&e=${episode}`;
+      return `https://www.2embed.cc/embedtv/${item.id}?s=${season}&e=${episode}`;
     }
     return `https://www.2embed.cc/embed/${item.id}`;
   }
