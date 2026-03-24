@@ -1,6 +1,6 @@
 'use client';
-import LiveTVPage from '../components/live-tv/LiveTVPage';
+import LiveTVPage3Column from '@/components/live-tv/Livetvpage3column';
 
 export default function LiveTV() {
-  return <LiveTVPage />;
+  return <LiveTVPage3Column />;
 }
