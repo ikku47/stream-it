@@ -84,6 +84,22 @@ You will need **Node.js 20+** and your preferred package manager (npm, pnpm, yar
    NEXT_PUBLIC_TMDB_KEY=your_tmdb_api_key_here
    ```
 
+### Music Streaming Auth
+
+YouTube requires authenticated cookies to stream audio from the server.
+
+1. Open `https://music.youtube.com` (logged in) in your browser.
+2. Open DevTools → Network.
+3. Click any request to `youtubei` or `videoplayback`.
+4. Copy the full `cookie:` header value.
+5. Run the helper and paste the value:
+
+```bash
+node scripts/extract-youtube-cookie.js
+```
+
+This prints the `YOUTUBE_COOKIE` entry to place in your `.env`, then restart the dev server.
+
 4. **Start the development server:**
    ```bash
    npm run dev

@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Search, X, Film, Clapperboard, Menu, Heart,
-  Home, Tv, Radio, TrendingUp, LayoutGrid, Languages, Calendar
+  Home, Tv, Radio, TrendingUp, LayoutGrid, Languages, Calendar, Music2
 } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useGenreMap } from "@/hooks/useTMDB";
@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { label: "Movies", href: "/movies", icon: Film },
   { label: "TV Shows", href: "/tv", icon: Tv },
   { label: "Live TV", href: "/live-tv", icon: Radio },
+  { label: "Music", href: "/music", icon: Music2 },
   { label: "Categories", href: "/categories", icon: LayoutGrid },
   { label: "Languages", href: "/languages", icon: Languages },
   { label: "Years", href: "/years", icon: Calendar },
