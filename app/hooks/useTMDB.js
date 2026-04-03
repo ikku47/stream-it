@@ -135,24 +135,36 @@ export function usePersonDetails(id) {
 }
 
 /* ── Search ──────────────────────────────────────────── */
+import { searchRadioStations } from "../lib/radio";
+
 export function useSearch(query) {
-  const { setSearchResults, setSearchLoading } = useStore();
+  const { setSearchResults, setRadioResults, setSearchLoading } = useStore();
 
   useEffect(() => {
     if (!query || query.length < 2) {
       setSearchResults([]);
+      setRadioResults([]);
       setSearchLoading(false);
       return;
     }
     setSearchLoading(true);
     const t = setTimeout(async () => {
       try {
-        const data  = await tmdb("/search/multi", { query });
-        const items = (data.results || []).filter(
+        const [tmdbData, radioData] = await Promise.all([
+          tmdb("/search/multi", { query }),
+          searchRadioStations(query, 50)
+        ]);
+        
+        const items = (tmdbData.results || []).filter(
           (i) => (i.media_type === "movie" || i.media_type === "tv") && i.poster_path
         );
+        
         setSearchResults(items);
-      } catch { setSearchResults([]); }
+        setRadioResults(radioData);
+      } catch { 
+        setSearchResults([]); 
+        setRadioResults([]);
+      }
       finally  { setSearchLoading(false); }
     }, 420);
     return () => clearTimeout(t);

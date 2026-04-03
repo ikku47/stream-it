@@ -42,10 +42,12 @@ const useStore = create(
       searchOpen:    false,
       searchQuery:   "",
       searchResults: [],
+      radioResults:  [],
       searchLoading: false,
       setSearchOpen:    (v)  => set({ searchOpen: v }),
       setSearchQuery:   (q)  => set({ searchQuery: q }),
       setSearchResults: (r)  => set({ searchResults: r }),
+      setRadioResults:  (r)  => set({ radioResults: r }),
       setSearchLoading: (v)  => set({ searchLoading: v }),
 
       // ── Toast ─────────────────────────────────────────────────

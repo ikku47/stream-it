@@ -33,15 +33,6 @@ const SpotifySidebar = ({
     return (
         <aside className={`fixed top-16 md:top-0 lg:relative inset-y-0 left-0 z-[140] w-72 shrink-0 bg-black flex flex-col overflow-hidden transition-transform lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full shadow-2xl shadow-orange-500/20'}`}>
             <div className="p-4 flex flex-col gap-1">
-                <div className="flex items-center justify-between mb-2 lg:hidden">
-                    <button 
-                        onClick={onClose}
-                        className="p-2 -ml-2 text-white/50 hover:text-white transition-colors"
-                    >
-                        <ChevronLeft className="w-6 h-6" />
-                    </button>
-                    <span className="text-xs font-bold text-white/20 uppercase tracking-[0.2em]">Nav Archive</span>
-                </div>
                 <button className="flex items-center gap-4 w-full px-4 py-2.5 rounded-md text-sm font-bold text-white transition-colors">
                     <Radio className="w-6 h-6" />
                     <span>World Radio</span>
@@ -284,7 +275,7 @@ export default function RadioPage() {
                 onClose={() => setSidebarOpen(false)}
             />
 
-            <main ref={mainRef} className="flex-1 m-2 bg-gradient-to-b from-[#1a1a1a] to-[#121212] rounded-xl overflow-y-auto custom-scrollbar relative shadow-2xl">
+            <main ref={mainRef} className="flex-1 m-2 bg-gradient-to-b from-[#1a1a1a] to-[#121212] rounded-xl overflow-y-auto custom-scrollbar relative ">
                 <header className="sticky top-0 z-30 flex items-center justify-between p-4 bg-transparent backdrop-blur-md">
                     <div className="flex items-center gap-4">
                          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden p-2 text-white/50 hover:text-white"><Menu /></button>

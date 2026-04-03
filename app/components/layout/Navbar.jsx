@@ -153,6 +153,29 @@ export default function Navbar() {
         </div>
       )}
 
+      {/* Mobile Search Bar (Overlay) */}
+      {searchOpen && (
+        <div className="fixed top-0 left-0 right-0 h-16 bg-black z-[70] md:hidden flex items-center px-4 gap-4 animate-fade-in shadow-2xl border-b border-white/5">
+          <Search className="w-5 h-5 text-white/20" />
+          <input
+            ref={inputRef}
+            type="text"
+            value={searchQuery}
+            onKeyDown={handleKeyDown}
+            onChange={handleSearch}
+            autoFocus
+            placeholder="Search movies, TV, radio..."
+            className="bg-transparent flex-1 text-base text-white font-medium outline-none placeholder-white/20"
+          />
+          <button
+            onClick={() => setSearchOpen(false)}
+            className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+          >
+            <X className="w-4 h-4 text-white/40" />
+          </button>
+        </div>
+      )}
+
       {/* Mobile Top Navbar (Stays as bar on mobile) */}
       <nav
         className={[
@@ -174,12 +197,14 @@ export default function Navbar() {
         </button>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={toggleSearch}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white/60 hover:text-white transition-all"
-          >
-            <Search className="w-5 h-5" />
-          </button>
+          {!searchOpen && (
+            <button
+              onClick={toggleSearch}
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white/60 hover:text-white transition-all"
+            >
+              <Search className="w-5 h-5" />
+            </button>
+          )}
           <button
             onClick={() => setMobileMenuOpen(true)}
             className="w-10 h-10 flex items-center justify-center text-white/80 hover:text-white transition-colors"
