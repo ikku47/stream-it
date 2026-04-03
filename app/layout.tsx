@@ -7,6 +7,7 @@ const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })
 
 import Navbar from "@/components/layout/Navbar";
 import PlayerOverlay from "@/components/player/PlayerOverlay";
+import SpotifyPlayerBar from "@/components/radio/SpotifyPlayerBar";
 import Toast from "@/components/ui/Toast";
 import BraveSuggestionDialog from "@/components/layout/BraveSuggestionDialog";
 import "./globals.css";
@@ -44,6 +45,7 @@ export default function RootLayout({
           {children}
         </main>
         <PlayerOverlay />
+        <SpotifyPlayerBar />
         <BraveSuggestionDialog />
         <Toast />
       </body>

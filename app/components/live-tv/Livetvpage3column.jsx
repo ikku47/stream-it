@@ -192,7 +192,7 @@ const ChannelListItem = ({ channel, isSelected, onSelect, onPreview }) => (
  */
 
 const CategorySidebar = ({ groups, selectedGroup, onSelectGroup, loading, onClose, isOpen }) => (
-    <aside className={`fixed lg:relative inset-y-0 left-0 z-40 w-64 shrink-0 border-r border-white/5 bg-black/40 backdrop-blur-xl flex flex-col overflow-hidden transition-transform lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+    <aside className={`fixed top-16 md:top-0 lg:relative inset-y-0 left-0 z-40 w-64 shrink-0 border-r border-white/5 bg-black/40 backdrop-blur-xl flex flex-col overflow-hidden transition-transform lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Header */}
         <div className="p-5 border-b border-white/5 flex items-center justify-between">
             <div>

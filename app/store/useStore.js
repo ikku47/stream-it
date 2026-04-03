@@ -89,6 +89,10 @@ const useStore = create(
       activeLiveChannel: null,
       setIPTVProvider: (id) => set({ iptvProviderId: id }),
       setActiveLiveChannel: (c) => set({ activeLiveChannel: c }),
+      
+      // ── Radio ─────────────────────────────────────────────────
+      activeRadioStation: null,
+      setActiveRadioStation: (s) => set({ activeRadioStation: s }),
     }),
     {
       name: "stream-it-storage",
@@ -96,6 +100,7 @@ const useStore = create(
         provider: state.provider,
         iptvProviderId: state.iptvProviderId,
         activeLiveChannel: state.activeLiveChannel,
+        activeRadioStation: state.activeRadioStation,
         braveSuggestionDismissed: state.braveSuggestionDismissed,
         favourites: state.favourites,
         continueWatching: state.continueWatching

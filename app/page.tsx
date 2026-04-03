@@ -5,6 +5,7 @@ import Hero from "@/components/ui/Hero";
 import MediaRow from "@/components/ui/MediaRow";
 import ChannelRow from "@/components/ui/ChannelRow";
 import CategoryRow from "@/components/ui/CategoryRow";
+import RadioRow from "@/components/ui/RadioRow";
 import { useRows } from "@/hooks/useTMDB";
 import { HOME_GENRES, LANGUAGES, YEARS } from "@/lib/tmdb";
 import useStore from "@/store/useStore";
@@ -47,6 +48,9 @@ export default function HomePage() {
 
         {/* Live TV Channels Row */}
         {!currentGenreId && <ChannelRow title="Broadcast: Live Channels" icon="RadioTower" />}
+
+        {/* Radio Broadcasts Row */}
+        {!currentGenreId && <RadioRow title="Live Radio Stations" icon="Mic2" />}
 
         {/* Discovery: Genres */}
         {!currentGenreId && <CategoryRow title="Explore by Category" icon="LayoutGrid" items={genreItems} type="categories" />}

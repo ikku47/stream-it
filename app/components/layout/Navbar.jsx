@@ -13,7 +13,8 @@ const NAV_LINKS = [
   { label: "Home", href: "/", icon: Home },
   { label: "Movies", href: "/movies", icon: Film },
   { label: "TV Shows", href: "/tv", icon: Tv },
-  { label: "Live TV", href: "/live-tv", icon: Radio },
+  { label: "Live TV", href: "/live-tv", icon: Tv },
+  { label: "Radio", href: "/radio", icon: Radio },
   { label: "Categories", href: "/categories", icon: LayoutGrid },
   { label: "Languages", href: "/languages", icon: Languages },
   { label: "Years", href: "/years", icon: Calendar },
@@ -63,7 +64,7 @@ export default function Navbar() {
     if (e.key === "Escape") toggleSearch();
   };
 
-  if (pathname === "/live-tv/watch") return null;
+  if (pathname === "/live-tv/watch" || pathname === "/radio/watch") return null;
 
   return (
     <>
