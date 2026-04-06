@@ -1,11 +1,11 @@
 'use client';
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, Volume2, Maximize2, VolumeX, Heart, Mic2, Minimize2, Globe, Music, Radio, Sparkles } from "lucide-react";
+import { Play, Pause, Volume2, Maximize2, VolumeX, Heart, Mic2, Minimize2, Globe, Music, Radio, Sparkles, X } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useRouter } from "next/navigation";
 
 export default function SpotifyPlayerBar() {
-    const { activeRadioStation, favourites, toggleFavourite } = useStore();
+    const { activeRadioStation, favourites, toggleFavourite, setActiveRadioStation, playerItem, activeLiveChannel } = useStore();
     const router = useRouter();
     const audioRef = useRef(null);
     const canvasRef = useRef(null);
@@ -24,6 +24,18 @@ export default function SpotifyPlayerBar() {
     const [isMuted, setIsMuted] = useState(false);
     const [isFav, setIsFav] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+    // Auto-close radio if other content starts playing
+    useEffect(() => {
+        if (activeRadioStation && (playerItem || activeLiveChannel)) {
+            // Give a tiny buffer for transitions
+            const timer = setTimeout(() => {
+                if (audioRef.current) audioRef.current.pause();
+                setActiveRadioStation(null);
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [playerItem, activeLiveChannel, activeRadioStation, setActiveRadioStation]);
 
     // Initial load & Fav check
     useEffect(() => {
@@ -178,12 +190,26 @@ export default function SpotifyPlayerBar() {
 
                 <canvas ref={canvasRef} className="absolute inset-0 opacity-50 mix-blend-screen" />
                 
-                <button 
-                  onClick={() => setIsExpanded(false)}
-                  className="absolute top-8 right-8 z-[310] p-3 rounded-full text-white/40 hover:text-white hover:bg-white/5 transition-all duration-300 hover:scale-110 active:scale-95 group"
-                >
-                    <Minimize2 className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
-                </button>
+                <div className="absolute top-8 right-8 z-[310] flex items-center gap-3">
+                    <button 
+                      onClick={() => setIsExpanded(false)}
+                      className="p-3 rounded-full text-white/40 hover:text-white hover:bg-white/5 transition-all duration-300 hover:scale-110 active:scale-95 group"
+                      title="Minimize"
+                    >
+                        <Minimize2 className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        if (audioRef.current) audioRef.current.pause();
+                        setActiveRadioStation(null);
+                        setIsExpanded(false);
+                      }}
+                      className="p-3 rounded-full text-white/40 hover:text-red-500 hover:bg-red-500/10 transition-all duration-300 hover:scale-110 active:scale-95 group"
+                      title="Close Player"
+                    >
+                        <X className="w-7 h-7" />
+                    </button>
+                </div>
 
                 <div ref={containerRef} className="relative z-[305] h-full flex flex-col items-center justify-center p-8 text-center max-w-5xl mx-auto">
                     
@@ -311,6 +337,20 @@ export default function SpotifyPlayerBar() {
                         className="text-white/40 hover:text-white transition-all duration-300 p-2 hover:bg-white/5 rounded-lg"
                     >
                         <Maximize2 className="w-5 h-5" />
+                    </button>
+
+                    <div className="w-px h-6 bg-white/10 mx-1 hidden md:block" />
+
+                    <button 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (audioRef.current) audioRef.current.pause();
+                            setActiveRadioStation(null);
+                        }}
+                        className="text-white/40 hover:text-red-500 transition-all duration-300 p-2 hover:bg-red-500/10 rounded-lg group/close"
+                        title="Close Player"
+                    >
+                        <X className="w-5 h-5 group-active/close:scale-90 transition-transform" />
                     </button>
                 </div>
             </div>
