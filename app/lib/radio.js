@@ -6,25 +6,60 @@ export const RADIO_API_BASE = "https://de1.api.radio-browser.info/json";
  * Internal cache helper using sessionStorage.
  */
 async function fetchWithCache(url, expiry = 3600000) { // Default 1 hour
-  if (typeof window === "undefined") return (await fetch(url)).json();
-  
-  const cacheKey = `radio_cache_${url}`;
-  const cached = sessionStorage.getItem(cacheKey);
-  
-  if (cached) {
-    const { data, timestamp } = JSON.parse(cached);
-    if (Date.now() - timestamp < expiry) return data;
+  if (typeof window === "undefined") {
+    try {
+      const res = await fetch(url);
+      return res.ok ? res.json() : [];
+    } catch { return []; }
   }
   
+  const cacheKey = `radio_cache_${url}`;
+  
+  try {
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp < expiry) return data;
+    }
+  } catch (e) {
+    console.warn("Radio Cache Read Error:", e);
+  }
+  
+  let data = [];
   try {
     const res = await fetch(url);
-    if (!res.ok) throw new Error("API Error");
-    const data = await res.json();
-    sessionStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: Date.now() }));
+    if (!res.ok) throw new Error(`API Error: ${res.status}`);
+    data = await res.json();
+    
+    // Attempt to cache
+    try {
+      sessionStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: Date.now() }));
+    } catch (quotaError) {
+      if (quotaError.name === 'QuotaExceededError' || quotaError.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+        console.warn("Radio Cache Storage Quota Exceeded. Clearing old radio cache keys...");
+        // Clear all keys starting with radio_cache_ to free space
+        const keysToRemove = [];
+        for (let i = 0; i < sessionStorage.length; i++) {
+          const key = sessionStorage.key(i);
+          if (key && key.startsWith('radio_cache_')) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(k => sessionStorage.removeItem(k));
+        
+        // Try saving one last time after clearing
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: Date.now() }));
+        } catch (retryError) {
+          console.error("Radio Cache: Failed to cache even after clearing space. Data size might be too large for storage.");
+        }
+      }
+    }
+    
     return data;
   } catch (err) {
     console.error("Radio Cache Fetch Error:", err);
-    return [];
+    return data.length > 0 ? data : [];
   }
 }
 

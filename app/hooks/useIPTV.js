@@ -19,9 +19,29 @@ function getCached(providerId) {
 }
 
 function setCache(providerId, data) {
+  const cacheKey = `iptv_cache_${providerId}`;
   try {
-    sessionStorage.setItem(`iptv_cache_${providerId}`, JSON.stringify({ ts: Date.now(), data }));
-  } catch {}
+    sessionStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data }));
+  } catch (quotaError) {
+    if (quotaError.name === 'QuotaExceededError' || quotaError.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+      console.warn("IPTV Cache Storage Quota Exceeded. Clearing old IPTV cache keys...");
+      const keysToRemove = [];
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key.startsWith('iptv_cache_')) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(k => sessionStorage.removeItem(k));
+      
+      // Try saving again after clearing
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data }));
+      } catch (retryError) {
+        console.error("IPTV Cache: Failed to cache even after clearing space. M3U list might be too large for storage.");
+      }
+    }
+  }
 }
 
 export function useIPTV() {
