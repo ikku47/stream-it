@@ -20,6 +20,24 @@ declare global {
     items: MediaItem[];
     loading?: boolean;
   }
+
+  interface RadioStation {
+    id: string;
+    name: string;
+    url: string;
+    homepage?: string;
+    favicon?: string;
+    tags?: string;
+    country?: string;
+    countryCode?: string;
+    language?: string;
+    codec?: string;
+    bitrate?: number;
+    votes?: number;
+    clicks?: number;
+    lastCheckOk?: number;
+    type: 'radio';
+  }
 }
 
 export {};

@@ -68,7 +68,7 @@ export default function SearchPage() {
                                     <span className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-bold text-white/40 uppercase tracking-widest uppercase">Global Archive</span>
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-6">
-                                    {radioResults.map(station => (
+                                    {radioResults.map((station: RadioStation) => (
                                         <RadioCard key={station.id} station={station} inGrid={true} compact={true} spotify={true} />
                                     ))}
                                 </div>
@@ -86,7 +86,7 @@ export default function SearchPage() {
                                     <span className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-bold text-white/40 uppercase tracking-widest uppercase">TMDB Data</span>
                                 </div>
                                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 2xl:grid-cols-10 gap-4">
-                                    {searchResults.map((item) => (
+                                    {searchResults.map((item: MediaItem) => (
                                         <MediaCard key={`${item.id}-${item.media_type}`} item={item} inGrid />
                                     ))}
                                 </div>
