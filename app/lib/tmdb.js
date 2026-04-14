@@ -59,6 +59,19 @@ export const getYear = (i) => formatYear(i?.release_date || i?.first_air_date);
 export const getMediaLabel = (i) => `${getTitle(i)}${getYear(i) ? ` (${getYear(i)})` : ""}`;
 export const normalizeItem = (i) => ({ ...i, media_type: isTV(i) ? "tv" : "movie" });
 
+export const slugify = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+export const getCategorySlug = (category) => slugify(category?.name);
+export const getLanguageSlug = (language) => String(language?.id || "").toLowerCase();
+export const findCategoryBySlug = (slug) => HOME_GENRES.find((g) => g.id !== null && slugify(g.name) === slug) || null;
+export const findLanguageBySlug = (slug) => LANGUAGES.find((l) => String(l.id).toLowerCase() === String(slug).toLowerCase()) || null;
+
 export const HOME_GENRES = [
   { id: null, name: "All" },
   { id: 28, name: "Action" },

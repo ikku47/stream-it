@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { Filter, X, Search } from "lucide-react";
 
 interface FilterOption {
@@ -24,6 +24,40 @@ interface FilterBarProps {
   onClear: () => void;
 }
 
+interface SelectProps {
+  value: string | number | null;
+  onChange: (value: string | null) => void;
+  options: FilterOption[];
+  placeholder: string;
+  hidden?: boolean;
+}
+
+function Select({ value, onChange, options, placeholder, hidden }: SelectProps) {
+  if (hidden) return null;
+
+  return (
+    <div className="relative">
+      <select
+        value={value === null ? "all" : String(value)}
+        onChange={(e) => onChange(e.target.value === "all" ? null : e.target.value)}
+        className="appearance-none bg-[var(--color-surface-2)] border border-[var(--color-border)] text-white text-sm rounded-xl px-4 py-2.5 pr-10 focus:outline-none focus:ring-1 focus:ring-[var(--color-brand)] transition-all cursor-pointer hover:border-white/20 font-body block w-full max-w-[160px]"
+      >
+        <option value="all">{placeholder}</option>
+        {options.map((opt) => (
+          <option key={String(opt.id) || "all"} value={opt.id === null ? "all" : String(opt.id)}>
+            {opt.name}
+          </option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-white/50">
+        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 export default function FilterBar({
   type, setType,
   genre, setGenre,
@@ -34,34 +68,6 @@ export default function FilterBar({
   searchQuery, setSearchQuery,
   onClear
 }: FilterBarProps) {
-
-  // Custom styled select component
-  const Select = ({ value, onChange, options, placeholder, hidden }: any) => {
-    if (hidden) return null;
-
-    return (
-      <div className="relative">
-        <select
-          value={value === null ? "all" : String(value)}
-          onChange={(e) => onChange(e.target.value === "all" ? null : e.target.value)}
-          className="appearance-none bg-[var(--color-surface-2)] border border-[var(--color-border)] text-white text-sm rounded-xl px-4 py-2.5 pr-10 focus:outline-none focus:ring-1 focus:ring-[var(--color-brand)] transition-all cursor-pointer hover:border-white/20 font-body block w-full max-w-[160px]"
-        >
-          <option value="all">{placeholder}</option>
-          {options.map((opt: any) => (
-            <option key={String(opt.id) || "all"} value={opt.id === null ? "all" : String(opt.id)}>
-              {opt.name}
-            </option>
-          ))}
-        </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-white/50">
-          <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-          </svg>
-        </div>
-      </div>
-    );
-  };
-
   const hasActiveFilters =
     (hiddenFilter !== "genre" && genre !== null) ||
     (hiddenFilter !== "language" && language !== null) ||
@@ -128,7 +134,7 @@ export default function FilterBar({
           <Select
             value={year}
             onChange={setYear}
-            options={years.map((y) => ({ id: y, name: String(y) }))}
+            options={years}
             placeholder="All Years"
             hidden={hiddenFilter === "year"}
           />

@@ -1,12 +1,25 @@
 'use client';
 import { useRouter } from "next/navigation";
 import * as Icons from "lucide-react";
+import { getCategorySlug, getLanguageSlug } from "@/lib/tmdb";
 
 export default function CategoryRow({ title, items, type, icon }) {
   const router = useRouter();
   const Icon = Icons[icon || "LayoutGrid"];
 
-  const handleNavigate = () => {
+  const handleNavigate = (item) => {
+    if (type === "categories") {
+      router.push(`/categories/${getCategorySlug(item)}`);
+      return;
+    }
+    if (type === "languages") {
+      router.push(`/languages/${getLanguageSlug(item)}`);
+      return;
+    }
+    if (type === "years") {
+      router.push(`/years/${item.id}`);
+      return;
+    }
     router.push(`/${type}`);
   };
 
@@ -22,7 +35,7 @@ export default function CategoryRow({ title, items, type, icon }) {
         {items.map((item) => (
           <button
             key={item.id}
-            onClick={handleNavigate}
+            onClick={() => handleNavigate(item)}
             className="flex-shrink-0 cursor-pointer relative w-28 h-28 md:w-32 md:h-32 rounded-[2rem] bg-black/40 border border-white/10 flex flex-col items-center justify-center hover:bg-white/5 hover:border-brand/40 transition-all shadow-xl group  active:scale-95 text-center px-2"
           >
             {/* The main content: Large text for numbers/short codes, smaller for long names */}

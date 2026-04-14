@@ -1,37 +1,33 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import FilterBar from "./FilterBar";
 import SelectionGrid from "./SelectionGrid";
 import MediaCard from "../cards/MediaCard";
 import SkeletonCard from "../cards/SkeletonCard";
 import { useDiscover } from "@/hooks/useDiscover";
-import { HOME_GENRES, LANGUAGES, YEARS } from "@/lib/tmdb";
+import { HOME_GENRES, LANGUAGES, YEARS, getCategorySlug, getLanguageSlug } from "@/lib/tmdb";
 import { ChevronLeft, Loader2 } from "lucide-react";
 
 interface DiscoverLayoutProps {
   pageType: "category" | "language" | "year";
   title: string;
+  initialSelection?: string | number | null;
 }
 
-export default function DiscoverLayout({ pageType, title }: DiscoverLayoutProps) {
-  const [activeSelection, setActiveSelection] = useState<string | number | null>(null);
+export default function DiscoverLayout({ pageType, title, initialSelection = null }: DiscoverLayoutProps) {
+  const router = useRouter();
+  const activeSelection = initialSelection;
 
   // Filter States
   const [type, setType] = useState<"movie" | "tv">("movie");
-  const [genre, setGenre] = useState<string | number | null>(null);
-  const [language, setLanguage] = useState<string | null>(null);
-  const [year, setYear] = useState<string | null>(null);
+  const [genre, setGenre] = useState<string | number | null>(pageType === "category" ? initialSelection : null);
+  const [language, setLanguage] = useState<string | null>(pageType === "language" ? String(initialSelection ?? "") || null : null);
+  const [year, setYear] = useState<string | null>(pageType === "year" ? String(initialSelection ?? "") || null : null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // When activeSelection changes, set the corresponding filter
-  useEffect(() => {
-    if (activeSelection !== null) {
-      if (pageType === "category") setGenre(activeSelection);
-      if (pageType === "language") setLanguage(String(activeSelection));
-      if (pageType === "year") setYear(String(activeSelection));
-    }
-  }, [activeSelection, pageType]);
+  type DiscoverOption = { id: string | number | null; name: string };
 
   const { items, loading, loadMore, hasMore } = useDiscover({
     type,
@@ -41,7 +37,7 @@ export default function DiscoverLayout({ pageType, title }: DiscoverLayoutProps)
     searchQuery,
   });
 
-  const getSelectionItems = () => {
+  const getSelectionItems = (): DiscoverOption[] => {
     switch (pageType) {
       case "category": return HOME_GENRES.filter(g => g.id !== null);
       case "language": return LANGUAGES;
@@ -73,12 +69,32 @@ export default function DiscoverLayout({ pageType, title }: DiscoverLayoutProps)
   }, [loadMore]);
 
   // If no primary selection is made, show the grid.
+  const handleSelection = (selection: string | number | null) => {
+    if (pageType === "category") {
+      const selected = HOME_GENRES.find((g) => String(g.id) === String(selection));
+      if (selected?.id !== null) {
+        router.push(`/categories/${getCategorySlug(selected)}`);
+      }
+      return;
+    }
+    if (pageType === "language") {
+      const selected = LANGUAGES.find((l) => String(l.id) === String(selection));
+      if (selected) {
+        router.push(`/languages/${getLanguageSlug(selected)}`);
+      }
+      return;
+    }
+    if (pageType === "year") {
+      router.push(`/years/${selection}`);
+    }
+  };
+
   if (activeSelection === null) {
     return (
       <SelectionGrid
         title={title}
-        items={getSelectionItems() as any}
-        onSelect={setActiveSelection}
+        items={getSelectionItems()}
+        onSelect={handleSelection}
       />
     );
   }
@@ -105,9 +121,9 @@ export default function DiscoverLayout({ pageType, title }: DiscoverLayoutProps)
         setYear={setYear}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        genres={HOME_GENRES as any}
+        genres={HOME_GENRES.filter((g) => g.id !== null)}
         languages={LANGUAGES}
-        years={YEARS as any}
+        years={YEARS.map((y) => ({ id: y, name: String(y) }))}
         hiddenFilter={pageType === "category" ? "genre" : pageType === "language" ? "language" : "year"}
         onClear={handleClearFilter}
       />
@@ -116,7 +132,10 @@ export default function DiscoverLayout({ pageType, title }: DiscoverLayoutProps)
       <div className="pt-8 px-4 md:px-8 max-w-[1600px] mx-auto">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-display text-3xl md:text-4xl text-white tracking-wide flex items-center gap-3">
-            <button onClick={() => setActiveSelection(null)} className="text-white/40 hover:text-white transition-colors text-2xl pb-1">
+            <button
+              onClick={() => router.push(pageType === "category" ? "/categories" : pageType === "language" ? "/languages" : "/years")}
+              className="text-white/40 hover:text-white transition-colors text-2xl pb-1"
+            >
               <ChevronLeft />
             </button>
             {getPrimaryLabel()}

@@ -237,3 +237,67 @@ export function generateRadioStationMetadata(station: RadioStation | null | unde
     },
   };
 }
+
+type DiscoverCategory = {
+  id: string | number | null;
+  name: string;
+};
+
+type DiscoverLanguage = {
+  id: string | number;
+  name: string;
+};
+
+export function generateCategoryMetadata(category: DiscoverCategory | null | undefined, canonical: string): Metadata {
+  const title = category?.name ? `${category.name} Movies & TV Shows | ${SITE_NAME}` : `Categories | ${SITE_NAME}`;
+  const description = category?.name
+    ? `Browse ${category.name.toLowerCase()} movies and TV series with posters, titles, and fast discovery.`
+    : `Browse movies and TV series by category on ${SITE_NAME}.`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: SITE_NAME,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
+
+export function generateLanguageMetadata(language: DiscoverLanguage | null | undefined, canonical: string): Metadata {
+  const title = language?.name ? `${language.name} Movies & TV Shows | ${SITE_NAME}` : `Languages | ${SITE_NAME}`;
+  const description = language?.name
+    ? `Browse ${language.name} movies and TV series with language-first discovery and cover artwork.`
+    : `Browse movies and TV series by language on ${SITE_NAME}.`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: SITE_NAME,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
