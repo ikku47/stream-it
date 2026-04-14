@@ -6,6 +6,7 @@ import Toast from "@/components/ui/Toast";
 import BraveSuggestionDialog from "@/components/layout/BraveSuggestionDialog";
 import { getSiteUrl } from "@/lib/seo";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -69,6 +70,7 @@ export default function RootLayout({
         <main className="min-h-screen bg-[var(--color-bg)] md:pl-[80px]">
           {children}
         </main>
+        <Analytics />
         <PlayerOverlay />
         <SpotifyPlayerBar />
         <BraveSuggestionDialog />
