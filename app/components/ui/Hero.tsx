@@ -31,7 +31,7 @@ export default function Hero({ item }: { item: MediaItem | null }) {
      selectMedia(norm);
      router.push(`/${type}/${item.id}`);
   };
-  const isFav   = favourites.some((f) => f.id === norm.id);
+  const isFav   = favourites.some((f: MediaItem) => f.id === norm.id);
 
   return (
     <section className="relative w-full overflow-hidden" style={{ height: "78vh", minHeight: "520px" }}>
