@@ -64,7 +64,7 @@ export function buildSectionOgImage({
         <div style={{ display: "flex", flexDirection: "column", gap: 18, zIndex: 1 }}>
           <div
             style={{
-              display: "inline-flex",
+              display: "flex",
               alignItems: "center",
               alignSelf: "flex-start",
               gap: 10,

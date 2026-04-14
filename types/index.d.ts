@@ -17,6 +17,7 @@ declare global {
   interface MediaRowType {
     title: string;
     emoji?: string;
+    icon?: string;
     items: MediaItem[];
     loading?: boolean;
   }

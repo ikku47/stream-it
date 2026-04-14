@@ -34,7 +34,7 @@ export default function HomePage() {
         {/* Home Mix Section 1: Top Rows */}
         {loading
           ? Array.from({ length: 2 }, (_, i) => <MediaRow key={i} title="" items={[]} loading={true} />)
-          : rows.slice(0, 2).map((row) => (
+          : rows.slice(0, 2).map((row: MediaRowType) => (
             <MediaRow key={row.title} title={row.title} icon={row.icon} items={row.items} loading={false} />
           ))
         }
