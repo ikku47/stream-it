@@ -1,6 +1,5 @@
 'use client'
 // pages/trending/index.jsx
-import Head from "next/head";
 import { useEffect } from "react";
 import Hero from "@/components/ui/Hero";
 import MediaRow from "@/components/ui/MediaRow";
@@ -15,10 +14,6 @@ export default function TrendingPage() {
 
     return (
         <>
-            <Head>
-                <title>Trending – JoyFlix</title>
-            </Head>
-
             <Hero item={heroItem} />
 
             <div className="px-4 md:px-8 pt-6 pb-1 flex items-center gap-3">

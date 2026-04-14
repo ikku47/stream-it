@@ -1,25 +1,52 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Outfit, JetBrains_Mono } from "next/font/google"
-
-const display = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-display" })
-const body = Outfit({ subsets: ["latin"], variable: "--font-body" })
-const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })
-
 import Navbar from "@/components/layout/Navbar";
 import PlayerOverlay from "@/components/player/PlayerOverlay";
 import SpotifyPlayerBar from "@/components/radio/SpotifyPlayerBar";
 import Toast from "@/components/ui/Toast";
 import BraveSuggestionDialog from "@/components/layout/BraveSuggestionDialog";
+import { getSiteUrl } from "@/lib/seo";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Stream It",
-  description: "A stunning, high-performance open-source streaming discovery platform.",
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: "Discover Movies, TV & Live Streams",
+    template: "%s | Stream It",
+  },
+  description: "Stream It helps you discover movies, TV shows, live channels, and radio with rich artwork and fast browsing.",
+  applicationName: "Stream It",
+  keywords: [
+    "movies",
+    "tv shows",
+    "streaming discovery",
+    "live tv",
+    "radio",
+    "TMDB",
+  ],
   manifest: "/manifest.json",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Stream It",
+    description: "Discover movies, TV series, live channels, and radio in one fast streaming hub.",
+    siteName: "Stream It",
+    url: "/",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Stream It",
+    description: "Discover movies, TV series, live channels, and radio in one fast streaming hub.",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Stream It",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -37,9 +64,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${display.variable} ${body.variable} ${mono.variable} antialiased`}
-      >
+      <body className="antialiased">
         <Navbar />
         <main className="min-h-screen bg-[var(--color-bg)] md:pl-[80px]">
           {children}

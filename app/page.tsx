@@ -1,6 +1,5 @@
 'use client';
-import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Hero from "@/components/ui/Hero";
 import MediaRow from "@/components/ui/MediaRow";
 import ChannelRow from "@/components/ui/ChannelRow";
@@ -13,11 +12,9 @@ import useStore from "@/store/useStore";
 export default function HomePage() {
   const { currentGenreId, setTab, heroItem, favourites, continueWatching } = useStore();
   const { rows, loading } = useRows("home", currentGenreId);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setTab("home");
-    setMounted(true);
   }, [setTab]);
 
   const genreItems = HOME_GENRES.filter(g => g.id !== null);
@@ -26,22 +23,18 @@ export default function HomePage() {
 
   return (
     <>
-      <Head>
-        <title>JoyFlix – Premium Streaming Discovery</title>
-      </Head>
-
       <Hero item={heroItem} />
 
       <div className="pb-24 pt-8 animate-fade-in" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
         {/* Priority: Continue Watching */}
-        {mounted && !loading && !currentGenreId && continueWatching.length > 0 && (
+        {!loading && !currentGenreId && continueWatching.length > 0 && (
           <MediaRow title="Resume Playback" icon="RotateCcw" items={continueWatching} loading={false} />
         )}
 
         {/* Home Mix Section 1: Top Rows */}
         {loading
-          ? Array.from({ length: 2 }, (_, i) => <MediaRow key={i} title="" items={[] as any} loading={true} />)
-          : rows.slice(0, 2).map((row: any) => (
+          ? Array.from({ length: 2 }, (_, i) => <MediaRow key={i} title="" items={[]} loading={true} />)
+          : rows.slice(0, 2).map((row) => (
             <MediaRow key={row.title} title={row.title} icon={row.icon} items={row.items} loading={false} />
           ))
         }
@@ -59,7 +52,7 @@ export default function HomePage() {
         {!currentGenreId && <CategoryRow title="Global Languages" icon="Languages" items={languageItems} type="languages" />}
  
         {/* Favourites Section */}
-        {mounted && !loading && !currentGenreId && favourites.length > 0 && (
+        {!loading && !currentGenreId && favourites.length > 0 && (
           <MediaRow title="Personal Collection" icon="Heart" items={favourites} loading={false} />
         )}
  

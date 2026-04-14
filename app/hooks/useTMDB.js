@@ -89,8 +89,8 @@ export function useGenreMap() {
 }
 
 /* ── Item details + season/episodes ────────────────── */
-export function useItemDetails(id, type) {
-  const [details, setDetails] = useState(null);
+export function useItemDetails(id, type, initialDetails = null) {
+  const [details, setDetails] = useState(initialDetails);
 
   useEffect(() => {
     if (!id || !type) return;
@@ -111,14 +111,13 @@ export function useItemDetails(id, type) {
 }
 
 /* ── Person details + Combined Credits ───────────────── */
-export function usePersonDetails(id) {
-  const [person, setPerson] = useState(null);
-  const [credits, setCredits] = useState([]);
-  const [loading, setLoading] = useState(true);
+export function usePersonDetails(id, initialPerson = null, initialCredits = []) {
+  const [person, setPerson] = useState(initialPerson);
+  const [credits, setCredits] = useState(initialCredits);
+  const [loading, setLoading] = useState(!initialPerson);
 
   useEffect(() => {
     if (!id) return;
-    setLoading(true);
     tmdb(`/person/${id}`, { append_to_response: 'combined_credits' })
       .then(data => {
         setPerson(data);
@@ -129,7 +128,7 @@ export function usePersonDetails(id) {
       })
       .catch((err) => console.error("Error fetching person details", err))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, initialPerson]);
 
   return { person, credits, loading };
 }

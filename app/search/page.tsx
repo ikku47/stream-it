@@ -1,5 +1,4 @@
 'use client';
-import Head from "next/head";
 import { useEffect } from "react";
 import { Search as SearchIcon, Loader2, Radio, Clapperboard } from "lucide-react";
 import MediaCard from "@/components/cards/MediaCard";
@@ -17,17 +16,13 @@ export default function SearchPage() {
 
     return (
         <div className="pt-24 pb-32 px-4 md:px-8 min-h-screen bg-black text-white">
-            <Head>
-                <title>Search Results – JoyFlix</title>
-            </Head>
-
             <div className="max-w-[1800px] mx-auto">
-                {/* Search State Indicator */}
+            {/* Search State Indicator */}
                 <div className="mb-12">
                     {searchQuery ? (
                         <div className="space-y-2">
                              <h1 className="text-4xl md:text-6xl font-black tracking-tighter">
-                                Results for <span className="text-orange-500">"{searchQuery}"</span>
+                                Results for <span className="text-orange-500">&quot;{searchQuery}&quot;</span>
                              </h1>
                              {!searchLoading && (
                                 <p className="text-white/40 font-medium uppercase tracking-[0.3em] text-xs">
@@ -40,7 +35,7 @@ export default function SearchPage() {
                             <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-8">
                                 <SearchIcon className="w-10 h-10 text-white/20" />
                             </div>
-                            <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4">What's on your mind?</h2>
+                            <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4">What&apos;s on your mind?</h2>
                             <p className="text-white/40 max-w-md mx-auto text-lg leading-relaxed">
                                 Search for movies, actors, world radio stations, or live broadcasters from across the globe.
                             </p>
@@ -96,7 +91,7 @@ export default function SearchPage() {
                         {totalCount === 0 && (
                             <div className="flex flex-col items-center justify-center py-20 text-center">
                                 <div className="text-6xl mb-6">🏝️</div>
-                                <h3 className="text-3xl font-black tracking-tight mb-2">No broadcsts found</h3>
+                                <h3 className="text-3xl font-black tracking-tight mb-2">No broadcasts found</h3>
                                 <p className="text-white/40">Try searching for a different genre, country, or title.</p>
                             </div>
                         )}

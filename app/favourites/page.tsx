@@ -1,6 +1,6 @@
 'use client';
-import Head from "next/head";
 import { Heart } from "lucide-react";
+import Link from "next/link";
 import MediaCard from "@/components/cards/MediaCard";
 import useStore from "@/store/useStore";
 
@@ -9,10 +9,6 @@ export default function FavouritesPage() {
 
     return (
         <>
-            <Head>
-                <title>My Favourites – JoyFlix</title>
-            </Head>
-
             <div className="pt-24 pb-16 px-4 md:px-8 min-h-screen">
                 {/* Header */}
                 <div className="mb-8 flex items-center justify-between">
@@ -56,12 +52,12 @@ export default function FavouritesPage() {
                                 Add movies and series to your favourites to keep track of what you want to watch.
                             </p>
                         </div>
-                        <a 
+                        <Link
                             href="/"
                             className="px-8 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-all"
                         >
                             Browse Content
-                        </a>
+                        </Link>
                     </div>
                 )}
             </div>

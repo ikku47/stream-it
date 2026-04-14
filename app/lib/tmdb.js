@@ -8,7 +8,18 @@ export const img = (path, size = "w500") =>
 
 export const imgFallback = (path, size = "w342") =>
   img(path, size) ||
-  `https://via.placeholder.com/300x450/100f18/444?text=No+Image`;
+  `https://via.placeholder.com/${size === "original" ? "1280x720" : "300x450"}/100f18/444?text=No+Image`;
+
+export const getPosterImage = (item, size = "w342") =>
+  img(item?.poster_path || item?.backdrop_path || item?.profile_path, size);
+
+export const getBackdropImage = (item, size = "original") =>
+  img(item?.backdrop_path || item?.poster_path, size);
+
+export const getMediaImage = (item, kind = "poster", size = "w342") =>
+  kind === "backdrop"
+    ? getBackdropImage(item, size)
+    : getPosterImage(item, size);
 
 export async function tmdb(endpoint, params = {}) {
   const url = new URL(`${TMDB_BASE}${endpoint}`);
@@ -45,6 +56,7 @@ export const formatYear = (s) => (s ? new Date(s).getFullYear().toString() : "")
 export const isTV = (i) => i?.media_type === "tv" || i?.first_air_date !== undefined;
 export const getTitle = (i) => i?.title || i?.name || "—";
 export const getYear = (i) => formatYear(i?.release_date || i?.first_air_date);
+export const getMediaLabel = (i) => `${getTitle(i)}${getYear(i) ? ` (${getYear(i)})` : ""}`;
 export const normalizeItem = (i) => ({ ...i, media_type: isTV(i) ? "tv" : "movie" });
 
 export const HOME_GENRES = [
@@ -144,4 +156,3 @@ export const getProviderSearchUrl = (provider, title) => {
 
   return searchMap[id] || `https://www.google.com/search?q=watch+${q}+on+${encodeURIComponent(provider.provider_name)}`;
 };
-

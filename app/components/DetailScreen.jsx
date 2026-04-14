@@ -2,18 +2,19 @@
 // components/DetailScreen.jsx
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Play, Youtube, Star, Tv, Film, Heart, ArrowLeft } from "lucide-react";
-import { img, imgFallback, scoreColor, getTitle, getYear, isTV, normalizeItem } from "../lib/tmdb";
+import Image from "next/image";
+import { Play, Youtube, Tv, Film, Heart } from "lucide-react";
+import { img, imgFallback, scoreColor, getTitle, getYear, normalizeItem } from "../lib/tmdb";
 import { useItemDetails, fetchTrailer } from "../hooks/useTMDB";
 import useStore from "../store/useStore";
 
-export default function DetailScreen({ id, type }) {
+export default function DetailScreen({ id, type, initialDetails = null }) {
   const router = useRouter();
   const {
     selectedMedia, selectMedia,
     openPlayer, showToast,
     selectedSeason, selectedEpisode,
-    setSeason, setEpisode,
+    setSeason,
     genreMap,
     favourites, toggleFavourite,
   } = useStore();
@@ -23,7 +24,7 @@ export default function DetailScreen({ id, type }) {
   // Use selectedMedia if available, else null
   const instantItem = (selectedMedia && id && selectedMedia.id?.toString() === id.toString()) ? selectedMedia : null;
   // If we don't have instantItem, we rely on details fetched from hook
-  const { details, fetchSeasonEpisodes } = useItemDetails(id, type);
+  const { details, fetchSeasonEpisodes } = useItemDetails(id, type, initialDetails);
   const item = instantItem || details;
 
   const tv = type === 'tv';
@@ -77,9 +78,12 @@ export default function DetailScreen({ id, type }) {
       {/* Top Background Area */}
       <div className="relative w-full overflow-hidden" style={{ minHeight: "60vh", maxHeight: "80vh" }}>
 
-        <img
+        <Image
           src={backdrop}
-          alt={title}
+          alt={`${title} cover art`}
+          fill
+          priority
+          sizes="100vw"
           className="absolute inset-0 w-full h-full object-cover animate-fade-in"
           style={{ objectPosition: "center 20%" }}
         />
@@ -295,7 +299,7 @@ export default function DetailScreen({ id, type }) {
                   router.push(`/${type}/${s.id}`);
                 }} className="flex-shrink-0 w-[140px] lg:w-[160px] cursor-pointer group">
                   <div className="w-full aspect-[2/3] rounded-2xl overflow-hidden mb-3 relative shadow-lg">
-                    <img src={img(s.poster_path, "w342")} alt={getTitle(s)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={img(s.poster_path || s.backdrop_path, "w342")} alt={`${getTitle(s)} poster`} title={getTitle(s)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
                   </div>
                   <p className="text-sm lg:text-[15px] text-white font-bold leading-tight line-clamp-2 group-hover:text-[var(--color-brand)] transition-colors">{getTitle(s)}</p>

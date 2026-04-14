@@ -32,8 +32,9 @@ export default function MediaCard({ item, inGrid = false }) {
       {/* Poster */}
       <div className="relative overflow-hidden" style={{ aspectRatio: "2/3" }}>
         <img
-          src={imgFallback(item.poster_path, "w342")}
-          alt={title}
+          src={imgFallback(item.poster_path || item.backdrop_path, "w342")}
+          alt={`${title} poster`}
+          title={title}
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />

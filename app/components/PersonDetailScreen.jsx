@@ -5,9 +5,9 @@ import { img, normalizeItem } from "../lib/tmdb";
 import { usePersonDetails } from "../hooks/useTMDB";
 import MediaCard from "./cards/MediaCard";
 
-export default function PersonDetailScreen({ id }) {
+export default function PersonDetailScreen({ id, initialPerson = null, initialCredits = [] }) {
   const router = useRouter();
-  const { person, credits, loading } = usePersonDetails(id);
+  const { person, credits, loading } = usePersonDetails(id, initialPerson, initialCredits);
 
   if (loading) {
     return (

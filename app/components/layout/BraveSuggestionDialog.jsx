@@ -69,7 +69,7 @@ export default function BraveSuggestionDialog() {
         <div>
           <h3 className="text-white font-medium text-[15px] mb-1">Ad-Free Experience</h3>
           <p className="text-white/60 text-sm leading-relaxed mb-4">
-            We highly recommend using <strong>Brave Browser</strong> to block all video provider ads and popups for the best viewing experience on JoyFlix.
+            We highly recommend using <strong>Brave Browser</strong> to block all video provider ads and popups for the best viewing experience on Stream It.
           </p>
           
           <div className="flex flex-col gap-2">
@@ -91,7 +91,7 @@ export default function BraveSuggestionDialog() {
             <div className="mt-4 pt-4 border-t border-white/10 flex gap-3">
               <Smartphone className="w-4 h-4 text-white/40 mt-0.5 flex-shrink-0" />
               <p className="text-white/50 text-xs">
-                Once in Brave, tap the menu and select <strong>"Add to Home screen"</strong> to use JoyFlix like a native app!
+                Once in Brave, tap the menu and select <strong>&quot;Add to Home screen&quot;</strong> to use Stream It like a native app!
               </p>
             </div>
           )}

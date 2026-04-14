@@ -1,6 +1,5 @@
 'use client'
 // pages/tv/index.jsx
-import Head from "next/head";
 import { useEffect } from "react";
 import Hero from "@/components/ui/Hero";
 import GenreBar from "@/components/ui/GenreBar";
@@ -16,10 +15,6 @@ export default function TVPage() {
 
     return (
         <>
-            <Head>
-                <title>TV Shows – JoyFlix</title>
-            </Head>
-
             <Hero item={heroItem} />
 
             <div className="px-4 md:px-8 pt-6 pb-1 flex items-center gap-3">

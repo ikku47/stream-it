@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Play, Info, Tv, Film, Heart } from "lucide-react";
-import { img, scoreColor, getTitle, getYear, isTV } from "../../lib/tmdb";
+import { img, imgFallback, scoreColor, getTitle, getYear, isTV } from "../../lib/tmdb";
 import useStore from "../../store/useStore";
 
 function HeroSkeleton() {
@@ -22,7 +23,7 @@ export default function Hero({ item }: { item: MediaItem | null }) {
   const title   = getTitle(item);
   const score   = (item.vote_average || 0).toFixed(1);
   const year    = getYear(item);
-  const bg      = img(item.backdrop_path, "original");
+  const bg      = img(item.backdrop_path || item.poster_path, "original") || imgFallback(item.poster_path, "original");
   const scoreC  = scoreColor(parseFloat(score));
   const norm    = { ...item, media_type: type };
 
@@ -30,15 +31,19 @@ export default function Hero({ item }: { item: MediaItem | null }) {
      selectMedia(norm);
      router.push(`/${type}/${item.id}`);
   };
-  const isFav   = favourites.some((f: any) => f.id === norm.id);
+  const isFav   = favourites.some((f) => f.id === norm.id);
 
   return (
     <section className="relative w-full overflow-hidden" style={{ height: "78vh", minHeight: "520px" }}>
       {/* Backdrop */}
       {bg && (
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat animate-fade-in"
-          style={{ backgroundImage: `url(${bg})` }}
+        <Image
+          src={bg}
+          alt={`${title} cover art`}
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 object-cover object-center animate-fade-in"
         />
       )}
 

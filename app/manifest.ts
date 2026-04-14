@@ -1,8 +1,8 @@
 export default function manifest() {
   return {
-    name: "JoyFlix",
-    short_name: "JoyFlix",
-    description: "A stunning, high-performance open-source streaming discovery platform.",
+    name: "Stream It",
+    short_name: "Stream It",
+    description: "A streaming discovery platform for movies, TV series, live channels, and radio.",
     start_url: "/",
     display: "standalone",
     background_color: "#111111",

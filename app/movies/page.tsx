@@ -1,5 +1,4 @@
 'use client';
-import Head from "next/head";
 import { useEffect } from "react";
 import Hero from "@/components/ui/Hero";
 import GenreBar from "@/components/ui/GenreBar";
@@ -15,10 +14,6 @@ export default function MoviesPage() {
 
     return (
         <>
-            <Head>
-                <title>Movies – JoyFlix</title>
-            </Head>
-
             <Hero item={heroItem} />
 
             {/* Page label */}

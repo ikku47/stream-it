@@ -193,7 +193,7 @@ export default function Navbar() {
           >
             <Clapperboard className="w-4 h-4 text-white" />
           </div>
-          <span className="text-xl">Joy<span className="text-[var(--color-brand)]">Flix</span></span>
+          <span className="text-xl">Stream <span className="text-[var(--color-brand)]">It</span></span>
         </button>
 
         <div className="flex items-center gap-2">
