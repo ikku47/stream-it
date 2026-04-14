@@ -5,6 +5,7 @@ import useStore from "@/store/useStore";
 import { getTopRadioStations, getRadioCountries, getRadioTags, searchRadioStations, getStationsByCountry, getStationsByTag, getRadioLanguages, getStationsByLanguage, getTrendingRadioStations } from "@/lib/radio";
 import RadioCard from "../cards/RadioCard";
 import { useEffect, useState, useRef, useMemo } from "react";
+import { useRouter } from "next/navigation";
 
 /**
  * ─── SPOTIFY STYLE SIDEBAR ─────────────────────────────────────────────────────
@@ -199,6 +200,7 @@ const SpotifySidebar = ({
  */
 export default function RadioPage() {
     const { setTab, setActiveRadioStation, favourites } = useStore();
+    const router = useRouter();
     const [stations, setStations] = useState([]);
     const [countries, setCountries] = useState([]);
     const [tags, setTags] = useState([]);
@@ -251,6 +253,7 @@ export default function RadioPage() {
 
     const handlePlay = (station) => {
         setActiveRadioStation(station);
+        router.push(`/radio/${encodeURIComponent(station.id)}`);
     };
 
     return (

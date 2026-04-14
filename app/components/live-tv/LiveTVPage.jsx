@@ -6,7 +6,7 @@ import { Search, Play, Tv, Info, AlertCircle, ChevronRight, LayoutGrid, List as 
 import { VirtuosoGrid } from "react-virtuoso";
 import useStore from "@/store/useStore";
 import { useIPTV, useIPTVFiltered, useIPTVGroups } from "@/hooks/useIPTV";
-import { getGroupIcon, IPTV_PROVIDERS } from "@/lib/iptv";
+import { getGroupIcon, IPTV_PROVIDERS, encodeChannelRouteKey } from "@/lib/iptv";
 import LivePlayer from "./LivePlayer";
 
 /**
@@ -123,7 +123,7 @@ export default function LiveTVPage() {
 
   const handleSelectChannel = (channel) => {
     setActiveLiveChannel(channel);
-    router.push("/live-tv/watch");
+    router.push(`/live-tv/${encodeChannelRouteKey(channel)}`);
   };
 
   const filteredChannels = useIPTVFiltered(channels, selectedGroup, searchQuery);

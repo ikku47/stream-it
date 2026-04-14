@@ -64,7 +64,7 @@ export default function Navbar() {
     if (e.key === "Escape") toggleSearch();
   };
 
-  if (pathname === "/live-tv/watch" || pathname === "/radio/watch") return null;
+  if ((pathname === "/live-tv/watch" || pathname?.startsWith("/live-tv/")) && pathname !== "/live-tv") return null;
 
   return (
     <>

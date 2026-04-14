@@ -1,26 +1,20 @@
 'use client';
 import { useRouter } from "next/navigation";
-import LivePlayer from "@/components/live-tv/LivePlayer";
+import { useEffect } from "react";
 import useStore from "@/store/useStore";
+import { encodeChannelRouteKey } from "@/lib/iptv";
 
 export default function WatchLivePage() {
-  const { activeLiveChannel, setActiveLiveChannel } = useStore();
+  const { activeLiveChannel } = useStore();
   const router = useRouter();
 
-  if (!activeLiveChannel) {
-    if (typeof window !== "undefined") router.replace("/live-tv");
-    return null;
-  }
+  useEffect(() => {
+    if (activeLiveChannel) {
+      router.replace(`/live-tv/${encodeChannelRouteKey(activeLiveChannel)}`);
+      return;
+    }
+    router.replace("/live-tv");
+  }, [activeLiveChannel, router]);
 
-  return (
-    <div className="bg-black w-screen h-screen overflow-hidden">
-      <LivePlayer 
-        channel={activeLiveChannel} 
-        onClose={() => {
-          setActiveLiveChannel(null);
-          router.push("/live-tv");
-        }} 
-      />
-    </div>
-  );
+  return null;
 }

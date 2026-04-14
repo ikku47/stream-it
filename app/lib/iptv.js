@@ -57,6 +57,22 @@ export const getIPTVProvider = (id) => IPTV_PROVIDERS.find(p => p.id === id) || 
 
 export const IPTV_URL = IPTV_PROVIDERS[0].url;
 
+export function getChannelRouteKey(channel) {
+  return channel?.id?.trim() || channel?.url || channel?.name || "";
+}
+
+export function encodeChannelRouteKey(channel) {
+  return encodeURIComponent(getChannelRouteKey(channel));
+}
+
+export function decodeChannelRouteKey(key) {
+  try {
+    return decodeURIComponent(key);
+  } catch {
+    return key;
+  }
+}
+
 /**
  * Parse an M3U playlist string into an array of channel objects.
  */
@@ -123,6 +139,23 @@ export function getGroups(channels) {
   }
   // Sort alphabetically, with 'All' first
   return ['All', ...[...allGroups].filter((g) => g !== 'All').sort()];
+}
+
+export async function fetchPlaylistChannels(providerId = IPTV_PROVIDERS[0].id) {
+  const provider = getIPTVProvider(providerId);
+  const response = await fetch(provider.url);
+  if (!response.ok) throw new Error(`IPTV ${response.status}`);
+  const text = await response.text();
+  return parseM3U(text.replace(/\r\n/g, '\n'));
+}
+
+export async function getChannelByRouteKey(key, providerId = IPTV_PROVIDERS[0].id) {
+  const decoded = decodeChannelRouteKey(key);
+  const channels = await fetchPlaylistChannels(providerId);
+  return channels.find((channel) => {
+    const channelKey = getChannelRouteKey(channel);
+    return channelKey === decoded || channel.url === decoded || channel.name === decoded;
+  }) || null;
 }
 
 /**

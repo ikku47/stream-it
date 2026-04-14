@@ -141,6 +141,15 @@ export async function getStationsByLanguage(lang, limit = 1000, offset = 0) {
   return formatStations(data);
 }
 
+/**
+ * Get a single station by UUID.
+ */
+export async function getRadioStationById(id) {
+  const url = `${RADIO_API_BASE}/stations/byuuid/${encodeURIComponent(id)}`;
+  const data = await fetchWithCache(url, 86400000);
+  return formatStations(data)[0] || null;
+}
+
 function formatStations(data) {
   if (!Array.isArray(data)) return [];
   return data.map(station => ({

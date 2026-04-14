@@ -9,9 +9,7 @@ export default function RadioCard({ station, inGrid = false, compact = false, sp
 
   const handleSelect = () => {
     setActiveRadioStation(station);
-    if (!inGrid && !spotify) {
-        router.push("/radio/watch");
-    }
+    router.push(`/radio/${encodeURIComponent(station.id)}`);
   };
 
   if (spotify) {

@@ -143,3 +143,97 @@ export function makeRouteMetadata(title: string, description: string, canonical:
       : undefined,
   };
 }
+
+type StreamChannel = {
+  id?: string;
+  name?: string;
+  group?: string;
+  logo?: string;
+  url?: string;
+};
+
+type RadioStation = {
+  id?: string;
+  name?: string;
+  country?: string;
+  language?: string;
+  favicon?: string;
+  codec?: string;
+  bitrate?: number;
+  tags?: string;
+  url?: string;
+};
+
+export function generateLiveChannelMetadata(channel: StreamChannel | null | undefined, canonical: string): Metadata {
+  const title = channel?.name ? `${channel.name} Live | ${SITE_NAME}` : `Live TV | ${SITE_NAME}`;
+  const description = channel?.group
+    ? `Watch ${channel.name || "this channel"} live on Stream It. Browse the ${channel.group.split(";")[0]} lineup and jump into the stream.`
+    : `Watch live TV channels on Stream It with fast discovery and direct playback.`;
+  const image = channel?.logo || null;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: SITE_NAME,
+      type: "video.other",
+      images: image
+        ? [
+            {
+              url: image,
+              alt: `${channel?.name || "Live TV"} logo`,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
+}
+
+export function generateRadioStationMetadata(station: RadioStation | null | undefined, canonical: string): Metadata {
+  const title = station?.name ? `${station.name} Radio | ${SITE_NAME}` : `Radio | ${SITE_NAME}`;
+  const description = station
+    ? `Listen to ${station.name}. ${station.country ? `${station.country} station.` : ""} ${station.tags ? `Tags: ${station.tags}.` : ""}`.trim()
+    : `Listen to radio stations from around the world on Stream It.`;
+  const image = station?.favicon || null;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: SITE_NAME,
+      type: "music.radio_station",
+      images: image
+        ? [
+            {
+              url: image,
+              alt: `${station?.name || "Radio station"} logo`,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
+}

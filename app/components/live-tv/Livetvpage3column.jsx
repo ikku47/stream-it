@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Search,
@@ -21,7 +21,7 @@ import {
 import { Virtuoso } from "react-virtuoso";
 import useStore from "@/store/useStore";
 import { useIPTV, useIPTVFiltered, useIPTVGroups } from "@/hooks/useIPTV";
-import { getGroupIcon, IPTV_PROVIDERS } from "@/lib/iptv";
+import { getGroupIcon, IPTV_PROVIDERS, encodeChannelRouteKey } from "@/lib/iptv";
 
 /**
  * ─── MINI PLAYER PREVIEW ─────────────────────────────────────────────────────
@@ -317,16 +317,17 @@ export default function LiveTVPage3Column() {
     setTab("live-tv");
   }, [setTab]);
 
-  useEffect(() => {
-    if (filteredChannels.length > 0 && !previewChannel) {
-      setPreviewChannel(filteredChannels[0]);
-    }
-  }, [filteredChannels, previewChannel]);
+    const activePreviewChannel = useMemo(() => {
+        if (previewChannel && filteredChannels.some((channel) => channel.url === previewChannel.url)) {
+            return previewChannel;
+        }
+        return filteredChannels[0] || null;
+    }, [filteredChannels, previewChannel]);
 
-  const handlePlayChannel = (channel) => {
-    setActiveLiveChannel(channel);
-    router.push("/live-tv/watch");
-  };
+    const handlePlayChannel = (channel) => {
+        setActiveLiveChannel(channel);
+        router.push(`/live-tv/${encodeChannelRouteKey(channel)}`);
+    };
 
   if (error) {
     return (
@@ -455,11 +456,11 @@ export default function LiveTVPage3Column() {
         <div className="flex md:hidden flex-1 flex-col w-full overflow-hidden">
           {/* TOP: 16:9 VIDEO PLAYER */}
           <div className="w-full aspect-video bg-black border-b border-white/5 shrink-0">
-            {previewChannel ? (
-              <MiniChannelPreview
-                channel={previewChannel}
-                onPlay={handlePlayChannel}
-              />
+                        {activePreviewChannel ? (
+                            <MiniChannelPreview
+                                channel={activePreviewChannel}
+                                onPlay={handlePlayChannel}
+                            />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <Tv className="w-12 h-12 text-white/10" />
@@ -588,11 +589,11 @@ export default function LiveTVPage3Column() {
 
             {/* Preview Content */}
             <div className="flex-1 p-3 md:p-5 overflow-hidden flex flex-col">
-              {previewChannel ? (
-                <MiniChannelPreview
-                  channel={previewChannel}
-                  onPlay={handlePlayChannel}
-                />
+                            {activePreviewChannel ? (
+                                <MiniChannelPreview
+                                    channel={activePreviewChannel}
+                                    onPlay={handlePlayChannel}
+                                />
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center opacity-40">
                   <Tv className="w-12 h-12 md:w-12 md:h-12 mb-3" />

@@ -2,6 +2,7 @@
 import { Play, Tv } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useRouter } from "next/navigation";
+import { encodeChannelRouteKey } from "@/lib/iptv";
 
 export default function ChannelCard({ channel, inGrid = false }) {
   const { setActiveLiveChannel } = useStore();
@@ -9,7 +10,7 @@ export default function ChannelCard({ channel, inGrid = false }) {
 
   const handleSelect = () => {
     setActiveLiveChannel(channel);
-    router.push("/live-tv/watch");
+    router.push(`/live-tv/${encodeChannelRouteKey(channel)}`);
   };
 
   return (
