@@ -1,4 +1,5 @@
 // lib/tmdb.js
+import useStore from "@/store/useStore";
 export const TMDB_KEY = "2dca580c2a14b55200e784d157207b4d";
 export const TMDB_BASE = "https://api.themoviedb.org/3";
 export const IMG_BASE = "https://image.tmdb.org/t/p/";
@@ -22,9 +23,18 @@ export const getMediaImage = (item, kind = "poster", size = "w342") =>
     : getPosterImage(item, size);
 
 export async function tmdb(endpoint, params = {}) {
+  const region = useStore.getState().region;
   const url = new URL(`${TMDB_BASE}${endpoint}`);
   url.searchParams.set("api_key", TMDB_KEY);
   url.searchParams.set("language", "en-US");
+  
+  if (region) {
+    if (endpoint.includes("/discover/") || endpoint.includes("/movie/") || endpoint.includes("/tv/")) {
+      url.searchParams.set("region", region);
+      url.searchParams.set("watch_region", region);
+    }
+  }
+
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   const res = await fetch(url.toString());
   if (!res.ok) throw new Error(`TMDB ${res.status}`);
@@ -33,11 +43,12 @@ export async function tmdb(endpoint, params = {}) {
 
 export async function fetchWatchProviders(id, type) {
   try {
+    const region = useStore.getState().region || "US";
     const data = await tmdb(`/${type}/${id}/watch/providers`);
     const results = data.results || {};
-    // Prioritize US, then GB, then anything available
-    const regional = results.US || results.GB || Object.values(results)[0] || {};
-    console.log(results)
+    // Prioritize user region, then US, then GB, then anything available
+    const regional = results[region] || results.US || results.GB || Object.values(results)[0] || {};
+    console.log("Watch Providers for region", region, ":", regional);
     return {
       link: regional.link,
       flatrate: regional.flatrate || []

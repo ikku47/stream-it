@@ -4,6 +4,7 @@ import PlayerOverlay from "@/components/player/PlayerOverlay";
 import SpotifyPlayerBar from "@/components/radio/SpotifyPlayerBar";
 import Toast from "@/components/ui/Toast";
 import BraveSuggestionDialog from "@/components/layout/BraveSuggestionDialog";
+import RegionManager from "@/components/layout/RegionManager";
 import { getSiteUrl } from "@/lib/seo";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
@@ -74,6 +75,7 @@ export default function RootLayout({
         <PlayerOverlay />
         <SpotifyPlayerBar />
         <BraveSuggestionDialog />
+        <RegionManager />
         <Toast />
       </body>
     </html>

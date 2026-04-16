@@ -9,11 +9,13 @@ const useStore = create(
       rowCache:  {},   // `${tab}_${genreId}` → [{ title, emoji, items }]
       genreMap:  null, // { [id]: name }
       heroItem:  null,
+      region:    null,
 
       setRowCache: (key, rows) =>
         set((s) => ({ rowCache: { ...s.rowCache, [key]: rows } })),
       setGenreMap: (map) => set({ genreMap: map }),
       setHeroItem: (item) => set({ heroItem: item }),
+      setRegion:   (r)    => set({ region: r }),
 
       // ── Navigation ────────────────────────────────────────────
       currentTab:     "home",
@@ -105,7 +107,8 @@ const useStore = create(
         activeRadioStation: state.activeRadioStation,
         braveSuggestionDismissed: state.braveSuggestionDismissed,
         favourites: state.favourites,
-        continueWatching: state.continueWatching
+        continueWatching: state.continueWatching,
+        region: state.region
       }), 
     }
   )
