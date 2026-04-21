@@ -1,10 +1,10 @@
 <div align="center">
-  <img src="./cover.png" alt="JoyFlix Cover" width="100%" />
+  <img src="./cover.png" alt="StreamIt Cover" width="100%" />
 
   <br />
   <br />
 
-  <h1>🍿 JoyFlix</h1>
+  <h1>🍿 StreamIt</h1>
   <p>
     <strong>A stunning, high-performance open-source streaming discovery platform.</strong>
   </p>
@@ -24,7 +24,7 @@
 
 ## 🌟 Introduction
 
-JoyFlix is a premium, open-source movie and TV show discovery application built with modern web technologies. Designed with a sleek, glassmorphic UI and smooth micro-interactions, JoyFlix offers a cinematic browsing experience tailored for cinephiles. It leverages the TMDB API to deliver real-time data, trending media, and advanced multi-dimensional filtering.
+StreamIt is a premium, open-source movie and TV show discovery application built with modern web technologies. Designed with a sleek, glassmorphic UI and smooth micro-interactions, StreamIt offers a cinematic browsing experience tailored for cinephiles. It leverages the TMDB API to deliver real-time data, trending media, and advanced multi-dimensional filtering.
 
 ## ✨ Features
 
@@ -65,12 +65,14 @@ You will need **Node.js 20+** and your preferred package manager (npm, pnpm, yar
 ### Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/your-username/stream-it.git
    cd stream-it
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    # or yarn install
@@ -80,11 +82,13 @@ You will need **Node.js 20+** and your preferred package manager (npm, pnpm, yar
 3. **Set up Environment Variables:**
    - The application relies on a TMDB key located inside `app/lib/tmdb.js`.
    - Update the `TMDB_KEY` export inside that file with your own developer key, or optionally refactor it to use `.env.local`:
+
    ```env
    NEXT_PUBLIC_TMDB_KEY=your_tmdb_api_key_here
    ```
 
 4. **Start the development server:**
+
    ```bash
    npm run dev
    # or yarn dev
@@ -116,7 +120,7 @@ You will need **Node.js 20+** and your preferred package manager (npm, pnpm, yar
 
 ## 📺 Streaming Providers
 
-JoyFlix is designed to be provider-agnostic. The video sources are modularized within `app/lib/providers/` and allow users to select their preferred backend right from the Navigation bar. The user's choice is persisted locally using Zustand.
+StreamIt is designed to be provider-agnostic. The video sources are modularized within `app/lib/providers/` and allow users to select their preferred backend right from the Navigation bar. The user's choice is persisted locally using Zustand.
 
 The core provider logic automatically determines if a media item is a `Movie` or a `TV Show` based on TMDB metadata (`media_type` or the presence of `first_air_date`). It then dynamically constructs the correct embed URL, appending season and episode parameters when necessary.
 
@@ -154,10 +158,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **IMPORTANT: This application is for educational and personal use only.**
 
-- JoyFlix does not host, store, or distribute any copyrighted content.
+- StreamIt does not host, store, or distribute any copyrighted content.
 - All content is sourced dynamically from third-party providers and websites.
 - Users are solely responsible for ensuring they have legal rights to access any content.
-- **IPTV Streams**: Live TV channels are provided as-is from publicly available GitHub repositories (e.g., IPTV-org). JoyFlix does not check the legal status of individual streams.
+- **IPTV Streams**: Live TV channels are provided as-is from publicly available GitHub repositories (e.g., IPTV-org). StreamIt does not check the legal status of individual streams.
 - The developers do not endorse or encourage copyright infringement.
 - Users must comply with all applicable laws in their jurisdiction.
 - Any legal issues should be directed to the actual content providers.
