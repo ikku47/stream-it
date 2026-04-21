@@ -1,11 +1,19 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/seo";
-import { HOME_GENRES, LANGUAGES, YEARS, slugify } from "@/lib/tmdb";
+import { HOME_GENRES, LANGUAGES, ROW_CONFIG, YEARS, normalizeItem, slugify, tmdb } from "@/lib/tmdb";
 
 type SitemapEntry = {
   url: string;
   changeFrequency?: MetadataRoute.Sitemap[number]["changeFrequency"];
   priority?: number;
+};
+
+type HomeRowItem = {
+  id?: string | number;
+  media_type?: "movie" | "tv";
+  poster_path?: string | null;
+  title?: string | null;
+  name?: string | null;
 };
 
 const baseEntries: SitemapEntry[] = [
@@ -33,24 +41,60 @@ function toAbsoluteSitemap(entries: SitemapEntry[]): MetadataRoute.Sitemap {
   }));
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const categoryEntries = HOME_GENRES.filter((genre) => genre.id !== null).map((genre) => ({
+async function getHomeDetailEntries(): Promise<SitemapEntry[]> {
+  const rowConfigs = [...ROW_CONFIG.home, ...ROW_CONFIG.movies, ...ROW_CONFIG.tv];
+  const settled = await Promise.allSettled(
+    rowConfigs.map(async (row) => {
+      const data = await tmdb(row.endpoint, { page: 1 });
+
+      return ((data.results || []) as HomeRowItem[])
+        .map(normalizeItem)
+        .filter((item) => item.id && item.poster_path)
+        .filter((item) => item.media_type === "movie" || item.media_type === "tv")
+        .map((item) => ({
+          url: `/${item.media_type}/${item.id}`,
+          changeFrequency: "weekly" as const,
+          priority: 0.75,
+        }));
+    })
+  );
+
+  const entries = settled.flatMap((result) => (result.status === "fulfilled" ? result.value : []));
+  const seen = new Set<string>();
+
+  return entries.filter((entry) => {
+    if (seen.has(entry.url)) return false;
+    seen.add(entry.url);
+    return true;
+  });
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const categoryEntries: SitemapEntry[] = HOME_GENRES.filter((genre) => genre.id !== null).map((genre) => ({
     url: `/categories/${slugify(genre.name)}`,
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));
 
-  const languageEntries = LANGUAGES.map((language) => ({
+  const languageEntries: SitemapEntry[] = LANGUAGES.map((language) => ({
     url: `/languages/${String(language.id).toLowerCase()}`,
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));
 
-  const yearEntries = YEARS.map((year) => ({
+  const yearEntries: SitemapEntry[] = YEARS.map((year) => ({
     url: `/years/${year}`,
     changeFrequency: "monthly" as const,
     priority: 0.6,
   }));
 
-  return toAbsoluteSitemap([...baseEntries, ...categoryEntries, ...languageEntries, ...yearEntries]);
+  const detailEntries = await getHomeDetailEntries();
+
+  return toAbsoluteSitemap([
+    ...baseEntries,
+    ...categoryEntries,
+    ...languageEntries,
+    ...yearEntries,
+    ...detailEntries,
+  ]);
 }
