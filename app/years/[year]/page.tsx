@@ -1,6 +1,10 @@
 import DiscoverLayout from "@/components/discover/DiscoverLayout";
 import { YEARS } from "@/lib/tmdb";
-import { makeRouteMetadata } from "@/lib/seo";
+import {
+  getBreadcrumbJsonLd,
+  getCollectionPageJsonLd,
+  makeRouteMetadata,
+} from "@/lib/seo";
 
 export function generateStaticParams() {
   return YEARS.map((year) => ({ year: String(year) }));
@@ -17,14 +21,30 @@ export async function generateMetadata({ params }: { params: Promise<{ year: str
 
 export default async function YearPage({ params }: { params: Promise<{ year: string }> }) {
   const { year } = await params;
+  const canonical = `/years/${year}`;
+  const schema = [
+    getBreadcrumbJsonLd([
+      { name: "Home", url: "/" },
+      { name: "Years", url: "/years" },
+      { name: year, url: canonical },
+    ]),
+    getCollectionPageJsonLd(
+      `${year} Movies & TV Shows`,
+      `Browse movies and TV series released in ${year}.`,
+      canonical
+    ),
+  ];
 
   return (
-    <div className="pt-20">
-      <DiscoverLayout
-        pageType="year"
-        title="Years"
-        initialSelection={year}
-      />
-    </div>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <div className="pt-20">
+        <DiscoverLayout
+          pageType="year"
+          title="Years"
+          initialSelection={year}
+        />
+      </div>
+    </>
   );
 }

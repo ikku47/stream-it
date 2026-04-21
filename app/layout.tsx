@@ -9,6 +9,28 @@ import { getSiteUrl } from "@/lib/seo";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
 
+const siteUrl = getSiteUrl();
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Stream It",
+    url: siteUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/search?query={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Stream It",
+    url: siteUrl,
+    logo: `${siteUrl}/icon-512.png`,
+  },
+];
+
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
@@ -67,6 +89,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         <Navbar />
         <main className="min-h-screen bg-[var(--color-bg)] md:pl-[80px]">
           {children}

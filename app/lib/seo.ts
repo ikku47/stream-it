@@ -164,6 +164,132 @@ type RadioStation = {
   url?: string;
 };
 
+type MediaDetails = {
+  title?: string;
+  name?: string;
+  overview?: string | null;
+  backdrop_path?: string | null;
+  poster_path?: string | null;
+  release_date?: string | null;
+  first_air_date?: string | null;
+  vote_average?: number | null;
+  vote_count?: number | null;
+  genres?: { name?: string }[];
+  number_of_seasons?: number | null;
+  number_of_episodes?: number | null;
+};
+
+type PersonDetails = {
+  name?: string;
+  profile_path?: string | null;
+  birthday?: string | null;
+  place_of_birth?: string | null;
+  overview?: string | null;
+};
+
+type BreadcrumbItem = {
+  name: string;
+  url: string;
+};
+
+function toAbsoluteUrl(url: string) {
+  return new URL(url, DEFAULT_SITE_URL).toString();
+}
+
+export function getBreadcrumbJsonLd(items: BreadcrumbItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: toAbsoluteUrl(item.url),
+    })),
+  };
+}
+
+export function getWebPageJsonLd(name: string, description: string, url: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name,
+    description,
+    url: toAbsoluteUrl(url),
+  };
+}
+
+export function getCollectionPageJsonLd(name: string, description: string, url: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name,
+    description,
+    url: toAbsoluteUrl(url),
+  };
+}
+
+export function getMovieJsonLd(details: MediaDetails | null | undefined, canonical: string) {
+  if (!details) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Movie",
+    name: getTitle(details),
+    description: getDescription(details, `Discover movie details on ${SITE_NAME}.`),
+    url: toAbsoluteUrl(canonical),
+    image: [getBackdropImage(details, "original"), getPosterImage(details, "w780")].filter(Boolean),
+    datePublished: details.release_date || undefined,
+    aggregateRating: details.vote_average
+      ? {
+          "@type": "AggregateRating",
+          ratingValue: Number(details.vote_average),
+          ratingCount: details.vote_count || undefined,
+        }
+      : undefined,
+    genre: details.genres?.map((genre: { name?: string }) => genre.name).filter(Boolean),
+  };
+}
+
+export function getTVSeriesJsonLd(details: MediaDetails | null | undefined, canonical: string) {
+  if (!details) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "TVSeries",
+    name: getTitle(details),
+    description: getDescription(details, `Discover TV series details on ${SITE_NAME}.`),
+    url: toAbsoluteUrl(canonical),
+    image: [getBackdropImage(details, "original"), getPosterImage(details, "w780")].filter(Boolean),
+    startDate: details.first_air_date || undefined,
+    numberOfSeasons: details.number_of_seasons || undefined,
+    numberOfEpisodes: details.number_of_episodes || undefined,
+    aggregateRating: details.vote_average
+      ? {
+          "@type": "AggregateRating",
+          ratingValue: Number(details.vote_average),
+          ratingCount: details.vote_count || undefined,
+        }
+      : undefined,
+    genre: details.genres?.map((genre: { name?: string }) => genre.name).filter(Boolean),
+  };
+}
+
+export function getPersonJsonLd(person: PersonDetails | null | undefined, canonical: string) {
+  if (!person) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: person.name,
+    url: toAbsoluteUrl(canonical),
+    image: person.profile_path ? img(person.profile_path, "h632") : undefined,
+    birthDate: person.birthday || undefined,
+    birthPlace: person.place_of_birth || undefined,
+    description: getDescription(person, `Explore cast biographies and filmography on ${SITE_NAME}.`),
+  };
+}
+
 export function generateLiveChannelMetadata(channel: StreamChannel | null | undefined, canonical: string): Metadata {
   const title = channel?.name ? `${channel.name} Live | ${SITE_NAME}` : `Live TV | ${SITE_NAME}`;
   const description = channel?.group

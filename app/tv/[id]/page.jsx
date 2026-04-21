@@ -1,5 +1,10 @@
 import DetailScreen from "@/components/DetailScreen";
-import { generateMediaMetadata, getMediaDetails } from "@/lib/seo";
+import {
+  generateMediaMetadata,
+  getBreadcrumbJsonLd,
+  getMediaDetails,
+  getTVSeriesJsonLd,
+} from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -9,5 +14,19 @@ export async function generateMetadata({ params }) {
 export default async function TVPage({ params }) {
   const { id } = await params;
   const initialDetails = await getMediaDetails(id, "tv");
-  return <DetailScreen id={id} type="tv" initialDetails={initialDetails} />;
+  const schema = [
+    getBreadcrumbJsonLd([
+      { name: "Home", url: "/" },
+      { name: "TV Shows", url: "/tv" },
+      { name: initialDetails?.name || "TV Show", url: `/tv/${id}` },
+    ]),
+    getTVSeriesJsonLd(initialDetails, `/tv/${id}`),
+  ].filter(Boolean);
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <DetailScreen id={id} type="tv" initialDetails={initialDetails} />
+    </>
+  );
 }

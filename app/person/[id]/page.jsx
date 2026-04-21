@@ -1,5 +1,10 @@
 import PersonDetailScreen from "@/components/PersonDetailScreen";
-import { generatePersonMetadata, getPersonDetails } from "@/lib/seo";
+import {
+  generatePersonMetadata,
+  getBreadcrumbJsonLd,
+  getPersonDetails,
+  getPersonJsonLd,
+} from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -12,12 +17,22 @@ export default async function PersonPage({ params }) {
   const initialCredits = (person?.combined_credits?.cast || [])
     .filter((credit) => credit.poster_path)
     .sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+  const schema = [
+    getBreadcrumbJsonLd([
+      { name: "Home", url: "/" },
+      { name: person?.name || "Cast & Crew", url: `/person/${id}` },
+    ]),
+    getPersonJsonLd(person, `/person/${id}`),
+  ].filter(Boolean);
 
   return (
-    <PersonDetailScreen
-      id={id}
-      initialPerson={person}
-      initialCredits={initialCredits}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <PersonDetailScreen
+        id={id}
+        initialPerson={person}
+        initialCredits={initialCredits}
+      />
+    </>
   );
 }
