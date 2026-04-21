@@ -12,11 +12,20 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ year: string }> }) {
   const { year } = await params;
-  return makeRouteMetadata(
-    `${year} | Stream It`,
-    `Browse movies and TV shows released in ${year}.`,
-    `/years/${year}`
-  );
+  return {
+    ...makeRouteMetadata(
+      `Watch Free Movies and Series from ${year} | Stream It`,
+      `Browse free movies and TV shows released in ${year}.`,
+      `/years/${year}`
+    ),
+    keywords: [
+      "free movies",
+      "free series",
+      `movies ${year}`,
+      `tv shows ${year}`,
+      "browse by year",
+    ],
+  };
 }
 
 export default async function YearPage({ params }: { params: Promise<{ year: string }> }) {
@@ -29,8 +38,8 @@ export default async function YearPage({ params }: { params: Promise<{ year: str
       { name: year, url: canonical },
     ]),
     getCollectionPageJsonLd(
-      `${year} Movies & TV Shows`,
-      `Browse movies and TV series released in ${year}.`,
+      `${year} Free Movies & TV Shows`,
+      `Browse free movies and TV series released in ${year}.`,
       canonical
     ),
   ];

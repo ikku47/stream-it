@@ -19,7 +19,20 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const category = findCategoryBySlug(slug);
-  return generateCategoryMetadata(category, `/categories/${slug}`);
+  const metadata = generateCategoryMetadata(category, `/categories/${slug}`);
+
+  return {
+    ...metadata,
+    keywords: category
+      ? [
+          "free movies",
+          "free series",
+          `free ${category.name.toLowerCase()} movies`,
+          `free ${category.name.toLowerCase()} tv shows`,
+          "browse by genre",
+        ]
+      : ["free movies", "free series", "browse by genre"],
+  };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -33,10 +46,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       { name: category?.name || "Category", url: canonical },
     ]),
     getCollectionPageJsonLd(
-      category?.name ? `${category.name} Movies & TV Shows` : "Categories",
+      category?.name ? `${category.name} Free Movies & TV Shows` : "Categories",
       category?.name
-        ? `Browse ${category.name.toLowerCase()} movies and TV series with posters and fast discovery.`
-        : "Browse movies and TV series by category on Stream It.",
+        ? `Browse ${category.name.toLowerCase()} free movies and TV series with posters and fast discovery.`
+        : "Browse free movies and TV series by category on Stream It.",
       canonical
     ),
   ];

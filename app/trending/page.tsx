@@ -1,15 +1,26 @@
 import TrendingPageClient from "@/components/browse/TrendingPageClient";
+import type { Metadata } from "next";
 import {
   getBreadcrumbJsonLd,
   getWebPageJsonLd,
   makeRouteMetadata,
 } from "@/lib/seo";
 
-export const metadata = makeRouteMetadata(
-  "Trending | Stream It",
-  "See what is trending right now across movies and TV series, with fast-loading posters and details.",
-  "/trending"
-);
+export const metadata: Metadata = {
+  ...makeRouteMetadata(
+    "Trending Free Movies and Series | Stream It",
+    "See trending free movies and series right now, with fast-loading posters, artwork, and details.",
+    "/trending"
+  ),
+  keywords: [
+    "trending movies",
+    "trending series",
+    "free movies",
+    "free series",
+    "watch free movies",
+    "watch free series",
+  ],
+};
 
 export default function TrendingPage() {
   const schema = [
@@ -18,8 +29,8 @@ export default function TrendingPage() {
       { name: "Trending", url: "/trending" },
     ]),
     getWebPageJsonLd(
-      "Trending",
-      "See what is trending right now across movies and TV series, with fast-loading posters and details.",
+      "Trending Free Movies and Series",
+      "See trending free movies and series right now, with fast-loading posters, artwork, and details.",
       "/trending"
     ),
   ];

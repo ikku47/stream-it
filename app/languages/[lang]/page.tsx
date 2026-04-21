@@ -13,7 +13,20 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   const language = findLanguageBySlug(lang);
-  return generateLanguageMetadata(language, `/languages/${lang}`);
+  const metadata = generateLanguageMetadata(language, `/languages/${lang}`);
+
+  return {
+    ...metadata,
+    keywords: language
+      ? [
+          "free movies",
+          "free series",
+          `free ${language.name.toLowerCase()} movies`,
+          `free ${language.name.toLowerCase()} tv shows`,
+          "browse by language",
+        ]
+      : ["free movies", "free series", "browse by language"],
+  };
 }
 
 export default async function LanguagePage({ params }: { params: Promise<{ lang: string }> }) {
@@ -27,10 +40,10 @@ export default async function LanguagePage({ params }: { params: Promise<{ lang:
       { name: language?.name || "Language", url: canonical },
     ]),
     getCollectionPageJsonLd(
-      language?.name ? `${language.name} Movies & TV Shows` : "Languages",
+      language?.name ? `${language.name} Free Movies & TV Shows` : "Languages",
       language?.name
-        ? `Browse ${language.name} movies and TV series with language-first discovery.`
-        : "Browse movies and TV series by language on Stream It.",
+        ? `Browse ${language.name.toLowerCase()} free movies and TV series with language-first discovery.`
+        : "Browse free movies and TV series by language on Stream It.",
       canonical
     ),
   ];

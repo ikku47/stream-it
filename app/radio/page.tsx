@@ -1,15 +1,25 @@
 import Radio from "@/components/radio/Radio";
+import type { Metadata } from "next";
 import {
   getBreadcrumbJsonLd,
   getWebPageJsonLd,
   makeRouteMetadata,
 } from "@/lib/seo";
 
-export const metadata = makeRouteMetadata(
-  "Radio | Stream It",
-  "Listen to radio stations from around the world with an easy discovery experience.",
-  "/radio"
-);
+export const metadata: Metadata = {
+  ...makeRouteMetadata(
+    "Watch Free Radio Stations | Stream It",
+    "Listen to free radio stations from around the world with an easy discovery experience.",
+    "/radio"
+  ),
+  keywords: [
+    "free radio",
+    "radio stations",
+    "watch free radio",
+    "listen to radio",
+    "radio discovery",
+  ],
+};
 
 export default function RadioPage() {
   const schema = [
@@ -18,8 +28,8 @@ export default function RadioPage() {
       { name: "Radio", url: "/radio" },
     ]),
     getWebPageJsonLd(
-      "Radio",
-      "Listen to radio stations from around the world with an easy discovery experience.",
+      "Watch Free Radio Stations",
+      "Listen to free radio stations from around the world with an easy discovery experience.",
       "/radio"
     ),
   ];

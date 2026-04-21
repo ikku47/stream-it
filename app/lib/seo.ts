@@ -293,8 +293,8 @@ export function getPersonJsonLd(person: PersonDetails | null | undefined, canoni
 export function generateLiveChannelMetadata(channel: StreamChannel | null | undefined, canonical: string): Metadata {
   const title = channel?.name ? `${channel.name} Live | ${SITE_NAME}` : `Live TV | ${SITE_NAME}`;
   const description = channel?.group
-    ? `Watch ${channel.name || "this channel"} live on Stream It. Browse the ${channel.group.split(";")[0]} lineup and jump into the stream.`
-    : `Watch live TV channels on Stream It with fast discovery and direct playback.`;
+    ? `Watch ${channel.name || "this channel"} live on Stream It. Browse the ${channel.group.split(";")[0]} lineup, discover free live TV, and jump into the stream.`
+    : `Watch free live TV channels on Stream It with fast discovery, broadcast details, and direct playback.`;
   const image = channel?.logo || null;
 
   return {
@@ -331,7 +331,7 @@ export function generateRadioStationMetadata(station: RadioStation | null | unde
   const title = station?.name ? `${station.name} Radio | ${SITE_NAME}` : `Radio | ${SITE_NAME}`;
   const description = station
     ? `Listen to ${station.name}. ${station.country ? `${station.country} station.` : ""} ${station.tags ? `Tags: ${station.tags}.` : ""}`.trim()
-    : `Listen to radio stations from around the world on Stream It.`;
+    : `Listen to free radio stations from around the world on Stream It.`;
   const image = station?.favicon || null;
 
   return {
@@ -375,10 +375,10 @@ type DiscoverLanguage = {
 };
 
 export function generateCategoryMetadata(category: DiscoverCategory | null | undefined, canonical: string): Metadata {
-  const title = category?.name ? `${category.name} Movies & TV Shows | ${SITE_NAME}` : `Categories | ${SITE_NAME}`;
+  const title = category?.name ? `${category.name} Free Movies & TV Shows | ${SITE_NAME}` : `Categories | ${SITE_NAME}`;
   const description = category?.name
-    ? `Browse ${category.name.toLowerCase()} movies and TV series with posters, titles, and fast discovery.`
-    : `Browse movies and TV series by category on ${SITE_NAME}.`;
+    ? `Browse ${category.name.toLowerCase()} free movies and TV series with posters, titles, and fast discovery.`
+    : `Browse free movies and TV series by category on ${SITE_NAME}.`;
 
   return {
     title,
@@ -402,10 +402,10 @@ export function generateCategoryMetadata(category: DiscoverCategory | null | und
 }
 
 export function generateLanguageMetadata(language: DiscoverLanguage | null | undefined, canonical: string): Metadata {
-  const title = language?.name ? `${language.name} Movies & TV Shows | ${SITE_NAME}` : `Languages | ${SITE_NAME}`;
+  const title = language?.name ? `${language.name} Free Movies & TV Shows | ${SITE_NAME}` : `Languages | ${SITE_NAME}`;
   const description = language?.name
-    ? `Browse ${language.name} movies and TV series with language-first discovery and cover artwork.`
-    : `Browse movies and TV series by language on ${SITE_NAME}.`;
+    ? `Browse ${language.name} free movies and TV series with language-first discovery and cover artwork.`
+    : `Browse free movies and TV series by language on ${SITE_NAME}.`;
 
   return {
     title,

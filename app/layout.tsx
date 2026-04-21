@@ -34,18 +34,23 @@ const structuredData = [
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "Discover Movies, TV & Live Streams",
+    default: "Watch Free Movies, Free Series, Live TV & Radio",
     template: "%s | Stream It",
   },
-  description: "Stream It helps you discover movies, TV shows, live channels, and radio with rich artwork and fast browsing.",
+  description: "Watch free movies, free series, live TV, and radio with rich artwork, fast browsing, and discovery rows.",
   applicationName: "Stream It",
   keywords: [
-    "movies",
-    "tv shows",
-    "streaming discovery",
+    "watch free movies",
+    "free movies",
+    "free series",
+    "free tv shows",
+    "watch free series",
+    "free movies online",
     "live tv",
     "radio",
-    "TMDB",
+    "streaming discovery",
+    "movie discovery",
+    "tv discovery",
   ],
   manifest: "/manifest.json",
   alternates: {
@@ -53,7 +58,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Stream It",
-    description: "Discover movies, TV series, live channels, and radio in one fast streaming hub.",
+    description: "Watch free movies, free series, live TV, and radio in one fast streaming hub.",
     siteName: "Stream It",
     url: "/",
     type: "website",
@@ -61,7 +66,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Stream It",
-    description: "Discover movies, TV series, live channels, and radio in one fast streaming hub.",
+    description: "Watch free movies, free series, live TV, and radio in one fast streaming hub.",
   },
   appleWebApp: {
     capable: true,

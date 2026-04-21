@@ -1,15 +1,26 @@
 import TVPageClient from "@/components/browse/TVPageClient";
+import type { Metadata } from "next";
 import {
   getBreadcrumbJsonLd,
   getCollectionPageJsonLd,
   makeRouteMetadata,
 } from "@/lib/seo";
 
-export const metadata = makeRouteMetadata(
-  "TV Shows | Stream It",
-  "Browse the latest and most popular TV shows with fast discovery, artwork, and metadata.",
-  "/tv"
-);
+export const metadata: Metadata = {
+  ...makeRouteMetadata(
+    "Watch Free TV Shows Online | Stream It",
+    "Watch free TV shows online, browse the latest series, and explore fast discovery, artwork, and metadata.",
+    "/tv"
+  ),
+  keywords: [
+    "watch free tv shows",
+    "free tv shows",
+    "free series",
+    "watch free series",
+    "free tv shows online",
+    "tv discovery",
+  ],
+};
 
 export default function TVPage() {
   const schema = [
@@ -18,8 +29,8 @@ export default function TVPage() {
       { name: "TV Shows", url: "/tv" },
     ]),
     getCollectionPageJsonLd(
-      "TV Shows",
-      "Browse the latest and most popular TV shows with fast discovery, artwork, and metadata.",
+      "Watch Free TV Shows Online",
+      "Watch free TV shows online, browse the latest series, and explore fast discovery, artwork, and metadata.",
       "/tv"
     ),
   ];

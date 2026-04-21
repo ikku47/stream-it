@@ -1,15 +1,25 @@
 import LiveTVPage3Column from "@/components/live-tv/Livetvpage3column";
+import type { Metadata } from "next";
 import {
   getBreadcrumbJsonLd,
   getWebPageJsonLd,
   makeRouteMetadata,
 } from "@/lib/seo";
 
-export const metadata = makeRouteMetadata(
-  "Live TV | Stream It",
-  "Browse live TV channels with broadcast details and direct playback.",
-  "/live-tv"
-);
+export const metadata: Metadata = {
+  ...makeRouteMetadata(
+    "Watch Free Live TV Channels | Stream It",
+    "Watch free live TV channels with broadcast details, direct playback, and fast discovery.",
+    "/live-tv"
+  ),
+  keywords: [
+    "watch free live tv",
+    "free live tv",
+    "live tv channels",
+    "watch live tv",
+    "live tv discovery",
+  ],
+};
 
 export default function LiveTV() {
   const schema = [
@@ -18,8 +28,8 @@ export default function LiveTV() {
       { name: "Live TV", url: "/live-tv" },
     ]),
     getWebPageJsonLd(
-      "Live TV",
-      "Browse live TV channels with broadcast details and direct playback.",
+      "Watch Free Live TV Channels",
+      "Watch free live TV channels with broadcast details, direct playback, and fast discovery.",
       "/live-tv"
     ),
   ];
