@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cache } from "react";
 import { getBackdropImage, getMediaLabel, getPosterImage, getTitle, img, tmdb } from "./tmdb";
 
-const DEFAULT_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://stream-it.vercel.app";
+const DEFAULT_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.stream-it.watch";
 const SITE_NAME = "Stream It";
 
 type OverviewItem = {
