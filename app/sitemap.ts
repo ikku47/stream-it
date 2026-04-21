@@ -18,6 +18,8 @@ const baseEntries: SitemapEntry[] = [
   { url: "/categories", changeFrequency: "weekly", priority: 0.8 },
   { url: "/languages", changeFrequency: "weekly", priority: 0.8 },
   { url: "/years", changeFrequency: "weekly", priority: 0.8 },
+  { url: "/about", changeFrequency: "monthly", priority: 0.5 },
+  { url: "/policy", changeFrequency: "monthly", priority: 0.5 },
 ];
 
 function toAbsoluteSitemap(entries: SitemapEntry[]): MetadataRoute.Sitemap {

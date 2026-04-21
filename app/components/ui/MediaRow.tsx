@@ -1,13 +1,23 @@
 // components/ui/MediaRow.jsx
-import { useRef } from "react";
+import { useMemo, useRef, type WheelEvent } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as Icons from "lucide-react";
 import MediaCard from "../cards/MediaCard";
 import SkeletonCard from "../cards/SkeletonCard";
 
 export default function MediaRow({ title, icon, items = [], loading = false }: any) {
+  const router = useRouter();
+  const pathname = usePathname();
   const trackRef = useRef<HTMLDivElement>(null);
   const Icon = (Icons as any)[icon || "Plus"];
+  const seeAllHref = useMemo(() => {
+    const normalized = String(title || "").toLowerCase();
+
+    if (normalized.includes("trending")) return "/trending";
+    if (normalized.includes("tv") || normalized.includes("airing") || normalized.includes("watch")) return "/tv";
+    return "/movies";
+  }, [title]);
 
   const scroll = (dir: number) => {
     if (!trackRef.current) return;
@@ -15,6 +25,27 @@ export default function MediaRow({ title, icon, items = [], loading = false }: a
       left: dir * trackRef.current.clientWidth * 0.78,
       behavior: "smooth",
     });
+  };
+
+  const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
+    if (!trackRef.current) return;
+
+    if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+      event.preventDefault();
+      window.scrollBy({
+        top: event.deltaY,
+        behavior: "auto",
+      });
+    }
+  };
+
+  const handleSeeAll = () => {
+    if (pathname === seeAllHref) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    router.push(seeAllHref);
   };
 
   return (
@@ -25,7 +56,10 @@ export default function MediaRow({ title, icon, items = [], loading = false }: a
           {Icon && <Icon className="w-5 h-5 text-[var(--color-brand)]" />}
           {title}
         </h2>
-        <button className="text-xs text-[var(--color-brand)] hover:text-[var(--color-brand-hover)] transition-colors font-semibold tracking-wider uppercase">
+        <button
+          onClick={handleSeeAll}
+          className="text-xs text-[var(--color-brand)] hover:text-[var(--color-brand-hover)] transition-colors font-semibold tracking-wider uppercase"
+        >
           See all ›
         </button>
       </div>
@@ -43,11 +77,12 @@ export default function MediaRow({ title, icon, items = [], loading = false }: a
 
         <div
           ref={trackRef}
-          className="flex gap-3 overflow-x-auto no-scrollbar px-4 md:px-8 pb-2"
+          onWheel={handleWheel}
+          className="flex gap-3 overflow-x-auto overflow-y-hidden no-scrollbar px-4 md:px-8 pb-2"
         >
           {loading
             ? Array.from({ length: 9 }, (_, i) => <SkeletonCard key={i} />)
-            : items.map((item:any) => (
+            : items.map((item: any) => (
               <MediaCard key={`${item.id}-${item.media_type}`} item={item} />
             ))}
         </div>

@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Search, X, Film, Clapperboard, Menu, Heart,
-  Home, Tv, Radio, TrendingUp, LayoutGrid, Languages, Calendar
+  Home, Tv, Radio, LayoutGrid, Languages, Calendar, Info, ShieldCheck
 } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useGenreMap } from "@/hooks/useTMDB";
@@ -19,6 +19,8 @@ const NAV_LINKS = [
   { label: "Languages", href: "/languages", icon: Languages },
   { label: "Years", href: "/years", icon: Calendar },
   { label: "Favourites", href: "/favourites", icon: Heart },
+  { label: "About", href: "/about", icon: Info },
+  { label: "Policy", href: "/policy", icon: ShieldCheck },
 ];
 
 export default function Navbar() {
