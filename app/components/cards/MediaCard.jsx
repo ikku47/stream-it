@@ -16,7 +16,8 @@ export default function MediaCard({ item, inGrid = false }) {
 
   const handleNavigate = () => {
     selectMedia(norm);
-    router.push(`/${type}/${item.id}`);
+    const path = tv ? `/tv-show/${item.id}` : `/movie/${item.id}`;
+    router.push(path);
   };
 
   return (

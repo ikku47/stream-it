@@ -57,7 +57,7 @@ export async function generateMediaMetadata(id: string | number, type: "movie" |
     `Watch ${titleText}${year ? ` (${year})` : ""}${director ? `, directed by ${director}` : ""}.${cast ? ` Starring ${cast}.` : ""} Discover posters, cast, trailer, and streaming details on ${SITE_NAME}.`
   );
 
-  const canonical = `/${type}/${id}`;
+  const canonical = type === "tv" ? `/tv-show/${id}` : `/${type}/${id}`;
   const poster = getPosterImage(details, "w780");
   const backdrop = getBackdropImage(details, "original");
   const images = [backdrop, poster].filter(Boolean).map((url) => ({

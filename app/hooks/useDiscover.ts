@@ -7,9 +7,10 @@ export interface UseDiscoverArgs {
   language?: string | null;
   year?: string | null;
   searchQuery?: string;
+  category?: string | null;
 }
 
-export function useDiscover({ type = "movie", genre, language, year, searchQuery = "" }: UseDiscoverArgs) {
+export function useDiscover({ type = "movie", genre, language, year, searchQuery = "", category = null }: UseDiscoverArgs) {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -21,7 +22,7 @@ export function useDiscover({ type = "movie", genre, language, year, searchQuery
     setPage(1);
     setHasMore(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, genre, language, year, searchQuery]);
+  }, [type, genre, language, year, searchQuery, category]);
 
   const fetchItems = useCallback(async () => {
     if (!hasMore) return;
@@ -42,6 +43,13 @@ export function useDiscover({ type = "movie", genre, language, year, searchQuery
         if (year && year !== "all") {
           if (type === "movie") params.primary_release_year = year;
           else params.first_air_date_year = year;
+        }
+      } else if (category) {
+        if (category.startsWith("trending")) {
+          const timeWindow = category.includes("day") ? "day" : "week";
+          endpoint = `/trending/${type}/${timeWindow}`;
+        } else {
+          endpoint = `/${type}/${category}`;
         }
       } else {
         endpoint = `/discover/${type}`;
@@ -69,7 +77,7 @@ export function useDiscover({ type = "movie", genre, language, year, searchQuery
     } finally {
       setLoading(false);
     }
-  }, [type, genre, language, year, page, hasMore]);
+  }, [type, genre, language, year, page, hasMore, category, searchQuery]);
 
   useEffect(() => {
     fetchItems();

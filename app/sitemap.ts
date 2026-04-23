@@ -53,7 +53,7 @@ async function getHomeDetailEntries(): Promise<SitemapEntry[]> {
         .filter((item) => item.id && item.poster_path)
         .filter((item) => item.media_type === "movie" || item.media_type === "tv")
         .map((item) => ({
-          url: `/${item.media_type}/${item.id}`,
+          url: item.media_type === "tv" ? `/tv-show/${item.id}` : `/${item.media_type}/${item.id}`,
           changeFrequency: "weekly" as const,
           priority: 0.75,
         }));
@@ -108,6 +108,9 @@ export function generateSitemaps() {
     { id: 1 }, // movies
     { id: 2 }, // tv
     { id: 3 }, // people
+    { id: 4 }, // movie categories
+    { id: 5 }, // tv categories
+    { id: 6 }, // trending slugs
   ];
 }
 
@@ -129,7 +132,7 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     case 2: {
       const data = await tmdb("/tv/popular", { page: 1 });
       const series = (data.results || []).map((t: any) => ({
-        url: getSiteUrl(`/tv/${t.id}`),
+        url: getSiteUrl(`/tv-show/${t.id}`),
         lastModified,
         changeFrequency: "weekly" as const,
         priority: 0.7,
@@ -140,6 +143,36 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     case 3: {
       const personEntries = await getTrendingPersonEntries();
       return toAbsoluteSitemap(personEntries);
+    }
+
+    case 4: {
+      const slugs = ["popular", "top-rated", "upcoming", "now-playing"];
+      return slugs.map((slug) => ({
+        url: getSiteUrl(`/movies/${slug}`),
+        lastModified,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      }));
+    }
+
+    case 5: {
+      const slugs = ["popular", "top-rated", "airing-today", "on-the-air"];
+      return slugs.map((slug) => ({
+        url: getSiteUrl(`/tv/${slug}`),
+        lastModified,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      }));
+    }
+
+    case 6: {
+      const slugs = ["today", "week", "movies", "tv"];
+      return slugs.map((slug) => ({
+        url: getSiteUrl(`/trending/${slug}`),
+        lastModified,
+        changeFrequency: "daily" as const,
+        priority: 0.8,
+      }));
     }
 
     default: {

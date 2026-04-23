@@ -14,9 +14,28 @@ export default function MediaRow({ title, icon, items = [], loading = false }: a
   const seeAllHref = useMemo(() => {
     const normalized = String(title || "").toLowerCase();
 
-    if (normalized.includes("trending")) return "/trending";
-    if (normalized.includes("tv") || normalized.includes("airing") || normalized.includes("watch")) return "/tv";
-    return "/movies";
+    // Trending logic
+    if (normalized.includes("trending")) {
+      if (normalized.includes("today")) return "/trending/today";
+      if (normalized.includes("movie")) return "/trending/movies";
+      if (normalized.includes("tv")) return "/trending/tv";
+      return "/trending/week";
+    }
+    
+    // Category-specific mapping
+    let slug = "";
+    if (normalized.includes("airing today")) slug = "airing-today";
+    else if (normalized.includes("top rated")) slug = "top-rated";
+    else if (normalized.includes("popular")) slug = "popular";
+    else if (normalized.includes("now playing")) slug = "now-playing";
+    else if (normalized.includes("upcoming")) slug = "upcoming";
+    else if (normalized.includes("on the air")) slug = "on-the-air";
+
+    const type = (normalized.includes("tv") || normalized.includes("show") || normalized.includes("airing")) ? "tv" : "movie";
+    const base = type === "tv" ? "/tv" : "/movies";
+
+    if (slug) return `${base}/${slug}`;
+    return base;
   }, [title]);
 
   const scroll = (dir: number) => {

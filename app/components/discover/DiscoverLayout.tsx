@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import FilterBar from "./FilterBar";
 import SelectionGrid from "./SelectionGrid";
 import MediaCard from "../cards/MediaCard";
@@ -16,17 +16,21 @@ interface DiscoverLayoutProps {
   initialSelection?: string | number | null;
   initialGenre?: string | number | null;
   initialYear?: string | null;
+  initialCategory?: string | null;
+  initialType?: "movie" | "tv";
 }
 
-export default function DiscoverLayout({ pageType, title, initialSelection = null, initialGenre = null, initialYear = null }: DiscoverLayoutProps) {
+export default function DiscoverLayout({ pageType, title, initialSelection = null, initialGenre = null, initialYear = null, initialCategory = null, initialType = null }: DiscoverLayoutProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const activeSelection = initialSelection;
 
   // Filter States
-  const [type, setType] = useState<"movie" | "tv">("movie");
+  const [type, setType] = useState<"movie" | "tv">(initialType || (searchParams.get("type") as any) || "movie");
   const [genre, setGenre] = useState<string | number | null>(pageType === "category" ? initialSelection : (initialGenre ?? null));
   const [language, setLanguage] = useState<string | null>(pageType === "language" ? String(initialSelection ?? "") || null : null);
   const [year, setYear] = useState<string | null>(pageType === "year" ? String(initialSelection ?? "") || null : (initialYear ?? null));
+  const [category, setCategory] = useState<string | null>(initialCategory || searchParams.get("category"));
   const [searchQuery, setSearchQuery] = useState("");
 
   type DiscoverOption = { id: string | number | null; name: string };
@@ -37,6 +41,7 @@ export default function DiscoverLayout({ pageType, title, initialSelection = nul
     language,
     year,
     searchQuery,
+    category,
   });
 
   const getSelectionItems = (): DiscoverOption[] => {
@@ -92,7 +97,7 @@ export default function DiscoverLayout({ pageType, title, initialSelection = nul
     }
   };
 
-  if (activeSelection === null) {
+  if (pageType !== "collection" && activeSelection === null) {
     return (
       <SelectionGrid
         title={title}
