@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import FilterBar from "./FilterBar";
 import SelectionGrid from "./SelectionGrid";
@@ -17,10 +17,10 @@ interface DiscoverLayoutProps {
   initialGenre?: string | number | null;
   initialYear?: string | null;
   initialCategory?: string | null;
-  initialType?: "movie" | "tv";
+  initialType?: "movie" | "tv" | null;
 }
 
-export default function DiscoverLayout({ pageType, title, initialSelection = null, initialGenre = null, initialYear = null, initialCategory = null, initialType = null }: DiscoverLayoutProps) {
+function DiscoverContent({ pageType, title, initialSelection = null, initialGenre = null, initialYear = null, initialCategory = null, initialType = null }: DiscoverLayoutProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeSelection = initialSelection;
@@ -189,5 +189,20 @@ export default function DiscoverLayout({ pageType, title, initialSelection = nul
         )}
       </div>
     </div>
+  );
+}
+
+export default function DiscoverLayout(props: DiscoverLayoutProps) {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 animate-spin text-brand" />
+          <p className="text-white/40 text-sm font-medium animate-pulse tracking-widest uppercase">Initializing Discovery...</p>
+        </div>
+      </div>
+    }>
+      <DiscoverContent {...props} />
+    </Suspense>
   );
 }
