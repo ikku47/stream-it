@@ -102,111 +102,75 @@ async function getCollectionEntries(): Promise<SitemapEntry[]> {
   return entries;
 }
 
-export function generateSitemaps() {
-  return [
-    { id: 0 }, // base
-    { id: 1 }, // movies
-    { id: 2 }, // tv
-    { id: 3 }, // people
-    { id: 4 }, // movie categories
-    { id: 5 }, // tv categories
-    { id: 6 }, // trending slugs
-  ];
-}
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const categoryEntries: SitemapEntry[] = HOME_GENRES.filter((genre) => genre.id !== null).map((genre) => ({
+    url: `/categories/${slugify(genre.name)}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
 
-export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
-  const lastModified = new Date();
+  const languageEntries: SitemapEntry[] = LANGUAGES.map((language) => ({
+    url: `/languages/${String(language.id).toLowerCase()}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
 
-  switch (id) {
-    case 1: {
-      const data = await tmdb("/movie/popular", { page: 1 });
-      const movies = (data.results || []).map((m: any) => ({
-        url: getSiteUrl(`/movie/${m.id}`),
-        lastModified,
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      }));
-      return movies;
-    }
+  const yearEntries: SitemapEntry[] = YEARS.map((year) => ({
+    url: `/years/${year}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
 
-    case 2: {
-      const data = await tmdb("/tv/popular", { page: 1 });
-      const series = (data.results || []).map((t: any) => ({
-        url: getSiteUrl(`/tv-show/${t.id}`),
-        lastModified,
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      }));
-      return series;
-    }
+  const [detailEntries, collectionEntries, movieData, tvData, personEntries] = await Promise.all([
+    getHomeDetailEntries(),
+    getCollectionEntries(),
+    tmdb("/movie/popular", { page: 1 }),
+    tmdb("/tv/popular", { page: 1 }),
+    getTrendingPersonEntries(),
+  ]);
 
-    case 3: {
-      const personEntries = await getTrendingPersonEntries();
-      return toAbsoluteSitemap(personEntries);
-    }
+  const movies = (movieData.results || []).map((m: any) => ({
+    url: `/movie/${m.id}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
 
-    case 4: {
-      const slugs = ["popular", "top-rated", "upcoming", "now-playing"];
-      return slugs.map((slug) => ({
-        url: getSiteUrl(`/movies/${slug}`),
-        lastModified,
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      }));
-    }
+  const series = (tvData.results || []).map((t: any) => ({
+    url: `/tv-show/${t.id}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
 
-    case 5: {
-      const slugs = ["popular", "top-rated", "airing-today", "on-the-air"];
-      return slugs.map((slug) => ({
-        url: getSiteUrl(`/tv/${slug}`),
-        lastModified,
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      }));
-    }
+  const movieCategories = ["popular", "top-rated", "upcoming", "now-playing"].map((slug) => ({
+    url: `/movies/${slug}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
 
-    case 6: {
-      const slugs = ["today", "week", "movies", "tv"];
-      return slugs.map((slug) => ({
-        url: getSiteUrl(`/trending/${slug}`),
-        lastModified,
-        changeFrequency: "daily" as const,
-        priority: 0.8,
-      }));
-    }
+  const tvCategories = ["popular", "top-rated", "airing-today", "on-the-air"].map((slug) => ({
+    url: `/tv/${slug}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
 
-    default: {
-      const categoryEntries: SitemapEntry[] = HOME_GENRES.filter((genre) => genre.id !== null).map((genre) => ({
-        url: `/categories/${slugify(genre.name)}`,
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      }));
+  const trendingSlugs = ["today", "week", "movies", "tv"].map((slug) => ({
+    url: `/trending/${slug}`,
+    changeFrequency: "daily" as const,
+    priority: 0.8,
+  }));
 
-      const languageEntries: SitemapEntry[] = LANGUAGES.map((language) => ({
-        url: `/languages/${String(language.id).toLowerCase()}`,
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      }));
-
-      const yearEntries: SitemapEntry[] = YEARS.map((year) => ({
-        url: `/years/${year}`,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      }));
-
-      const [detailEntries, collectionEntries] = await Promise.all([
-        getHomeDetailEntries(),
-        getCollectionEntries(),
-      ]);
-
-      return toAbsoluteSitemap([
-        ...baseEntries,
-        ...categoryEntries,
-        ...languageEntries,
-        ...yearEntries,
-        ...detailEntries,
-        ...collectionEntries,
-      ]);
-    }
-  }
+  return toAbsoluteSitemap([
+    ...baseEntries,
+    ...categoryEntries,
+    ...languageEntries,
+    ...yearEntries,
+    ...detailEntries,
+    ...collectionEntries,
+    ...movies,
+    ...series,
+    ...toAbsoluteSitemap(personEntries as any),
+    ...movieCategories,
+    ...tvCategories,
+    ...trendingSlugs,
+  ]);
 }
