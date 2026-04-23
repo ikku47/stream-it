@@ -244,6 +244,8 @@ export function getMovieJsonLd(details: MediaDetails | null | undefined, canonic
       ? {
           "@type": "AggregateRating",
           ratingValue: Number(details.vote_average),
+          bestRating: 10,
+          worstRating: 1,
           ratingCount: details.vote_count || undefined,
         }
       : undefined,
@@ -268,6 +270,8 @@ export function getTVSeriesJsonLd(details: MediaDetails | null | undefined, cano
       ? {
           "@type": "AggregateRating",
           ratingValue: Number(details.vote_average),
+          bestRating: 10,
+          worstRating: 1,
           ratingCount: details.vote_count || undefined,
         }
       : undefined,
