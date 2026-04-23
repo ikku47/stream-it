@@ -28,6 +28,7 @@ const baseEntries: SitemapEntry[] = [
   { url: "/years", changeFrequency: "weekly", priority: 0.8 },
   { url: "/about", changeFrequency: "monthly", priority: 0.5 },
   { url: "/policy", changeFrequency: "monthly", priority: 0.5 },
+  { url: "/dmca", changeFrequency: "monthly", priority: 0.5 },
 ];
 
 function toAbsoluteSitemap(entries: SitemapEntry[]): MetadataRoute.Sitemap {
@@ -69,6 +70,38 @@ async function getHomeDetailEntries(): Promise<SitemapEntry[]> {
   });
 }
 
+async function getTrendingPersonEntries(): Promise<SitemapEntry[]> {
+  try {
+    const data = await tmdb("/trending/person/week", { page: 1 });
+    return ((data.results || []) as any[])
+      .filter((p) => p.id && p.profile_path)
+      .map((p) => ({
+        url: `/person/${p.id}`,
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      }));
+  } catch {
+    return [];
+  }
+}
+
+async function getCollectionEntries(): Promise<SitemapEntry[]> {
+  const entries: SitemapEntry[] = [];
+  const topGenres = HOME_GENRES.filter((g) => g.id !== null).slice(0, 10);
+  const recentYears = YEARS.slice(0, 5);
+
+  topGenres.forEach((genre) => {
+    recentYears.forEach((year) => {
+      entries.push({
+        url: `/best/${slugify(genre.name)}-movies-${year}`,
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      });
+    });
+  });
+  return entries;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const categoryEntries: SitemapEntry[] = HOME_GENRES.filter((genre) => genre.id !== null).map((genre) => ({
     url: `/categories/${slugify(genre.name)}`,
@@ -88,7 +121,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  const detailEntries = await getHomeDetailEntries();
+  const [detailEntries, personEntries, collectionEntries] = await Promise.all([
+    getHomeDetailEntries(),
+    getTrendingPersonEntries(),
+    getCollectionEntries(),
+  ]);
 
   return toAbsoluteSitemap([
     ...baseEntries,
@@ -96,5 +133,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...languageEntries,
     ...yearEntries,
     ...detailEntries,
+    ...personEntries,
+    ...collectionEntries,
   ]);
 }

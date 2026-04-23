@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cache } from "react";
-import { getBackdropImage, getMediaLabel, getPosterImage, getTitle, img, tmdb } from "./tmdb";
+import { getBackdropImage, getMediaLabel, getPosterImage, getTitle, getYear, img, tmdb } from "./tmdb";
 
 const DEFAULT_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.stream-it.watch";
 const SITE_NAME = "Stream It";
@@ -29,7 +29,7 @@ function mediaKindLabel(type: string) {
 
 export const getMediaDetails = cache(async (id: string | number, type: "movie" | "tv") => {
   try {
-    return await tmdb(`/${type}/${id}`, { append_to_response: "credits,similar" });
+    return await tmdb(`/${type}/${id}`, { append_to_response: "credits,similar,videos" });
   } catch {
     return null;
   }
@@ -45,20 +45,24 @@ export const getPersonDetails = cache(async (id: string | number) => {
 
 export async function generateMediaMetadata(id: string | number, type: "movie" | "tv"): Promise<Metadata> {
   const details = await getMediaDetails(id, type);
-  const mediaLabel = details ? getMediaLabel(details) : "";
-  const title = mediaLabel && mediaLabel !== "—"
-    ? `${mediaLabel} | ${SITE_NAME}`
-    : `${type === "tv" ? "TV Series" : "Movie"} | ${SITE_NAME}`;
+  const titleText = details ? getTitle(details) : (type === "tv" ? "TV Series" : "Movie");
+  const year = details ? getYear(details) : "";
+  const title = `${titleText}${year ? ` (${year})` : ""} Full ${type === "tv" ? "Series" : "Movie"} | Watch Online | ${SITE_NAME}`;
+
+  const cast = details?.credits?.cast?.slice(0, 3).map((c: any) => c.name).join(", ");
+  const director = details?.credits?.crew?.find((c: any) => c.job === "Director" || c.job === "Executive Producer")?.name;
+  
   const description = getDescription(
     details,
-    `Discover ${mediaKindLabel(type)} details, posters, cast, and more on ${SITE_NAME}.`
+    `Watch ${titleText}${year ? ` (${year})` : ""}${director ? `, directed by ${director}` : ""}.${cast ? ` Starring ${cast}.` : ""} Discover posters, cast, trailer, and streaming details on ${SITE_NAME}.`
   );
+
   const canonical = `/${type}/${id}`;
   const poster = getPosterImage(details, "w780");
   const backdrop = getBackdropImage(details, "original");
   const images = [backdrop, poster].filter(Boolean).map((url) => ({
     url: url as string,
-    alt: `${getTitle(details)} poster and cover art`,
+    alt: `${titleText} ${type} poster and cover art`,
     width: 1280,
     height: 720,
   }));
@@ -165,6 +169,7 @@ type RadioStation = {
 };
 
 type MediaDetails = {
+  id?: number;
   title?: string;
   name?: string;
   overview?: string | null;
@@ -177,6 +182,14 @@ type MediaDetails = {
   genres?: { name?: string }[];
   number_of_seasons?: number | null;
   number_of_episodes?: number | null;
+  runtime?: number | null;
+  credits?: {
+    cast?: { name: string; character: string; id: number; profile_path: string | null }[];
+    crew?: { name: string; job: string }[];
+  };
+  videos?: {
+    results?: { key: string; site: string; type: string; name: string }[];
+  };
 };
 
 type PersonDetails = {
@@ -229,8 +242,28 @@ export function getCollectionPageJsonLd(name: string, description: string, url: 
   };
 }
 
+export function getVideoObjectJsonLd(details: MediaDetails | null | undefined) {
+  const trailer = details?.videos?.results?.find(
+    (v) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+  );
+  if (!trailer) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: `${getTitle(details)} Official Trailer`,
+    description: getDescription(details, `Watch the official trailer for ${getTitle(details)} on ${SITE_NAME}.`),
+    thumbnailUrl: [getBackdropImage(details, "original"), getPosterImage(details, "w780")].filter(Boolean),
+    uploadDate: details?.release_date || details?.first_air_date || new Date().toISOString(),
+    contentUrl: `https://www.youtube.com/watch?v=${trailer.key}`,
+    embedUrl: `https://www.youtube.com/embed/${trailer.key}`,
+  };
+}
+
 export function getMovieJsonLd(details: MediaDetails | null | undefined, canonical: string) {
   if (!details) return null;
+
+  const director = details.credits?.crew?.find((c) => c.job === "Director")?.name;
 
   return {
     "@context": "https://schema.org",
@@ -240,6 +273,7 @@ export function getMovieJsonLd(details: MediaDetails | null | undefined, canonic
     url: toAbsoluteUrl(canonical),
     image: [getBackdropImage(details, "original"), getPosterImage(details, "w780")].filter(Boolean),
     datePublished: details.release_date || undefined,
+    director: director ? { "@type": "Person", name: director } : undefined,
     aggregateRating: details.vote_average
       ? {
           "@type": "AggregateRating",
@@ -250,6 +284,25 @@ export function getMovieJsonLd(details: MediaDetails | null | undefined, canonic
         }
       : undefined,
     genre: details.genres?.map((genre: { name?: string }) => genre.name).filter(Boolean),
+  };
+}
+
+export function getTVEpisodeJsonLd(seriesDetails: MediaDetails, episode: any, canonical: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "TVEpisode",
+    name: episode.name,
+    episodeNumber: episode.episode_number,
+    partOfSeason: {
+      "@type": "TVSeason",
+      seasonNumber: episode.season_number,
+    },
+    partOfSeries: {
+      "@type": "TVSeries",
+      name: getTitle(seriesDetails),
+    },
+    description: episode.overview || seriesDetails.overview,
+    url: toAbsoluteUrl(canonical),
   };
 }
 
@@ -410,6 +463,32 @@ export function generateLanguageMetadata(language: DiscoverLanguage | null | und
   const description = language?.name
     ? `Browse ${language.name} free movies and TV series with language-first discovery and cover artwork.`
     : `Browse free movies and TV series by language on ${SITE_NAME}.`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: SITE_NAME,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
+
+export function generateCollectionMetadata(name: string, year?: string | number, canonical: string = ""): Metadata {
+  const yearSuffix = year ? ` (${year})` : "";
+  const title = `Best ${name}${yearSuffix} Movies & TV Shows | Watch Online | ${SITE_NAME}`;
+  const description = `Discover the best ${name.toLowerCase()} ${year ? `of ${year} ` : ""}available to watch online. Browse full cast, ratings, and trailers for top ${name.toLowerCase()} titles on ${SITE_NAME}.`;
 
   return {
     title,

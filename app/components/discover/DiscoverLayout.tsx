@@ -11,20 +11,22 @@ import { HOME_GENRES, LANGUAGES, YEARS, getCategorySlug, getLanguageSlug } from 
 import { ChevronLeft, Loader2 } from "lucide-react";
 
 interface DiscoverLayoutProps {
-  pageType: "category" | "language" | "year";
+  pageType: "category" | "language" | "year" | "collection";
   title: string;
   initialSelection?: string | number | null;
+  initialGenre?: string | number | null;
+  initialYear?: string | null;
 }
 
-export default function DiscoverLayout({ pageType, title, initialSelection = null }: DiscoverLayoutProps) {
+export default function DiscoverLayout({ pageType, title, initialSelection = null, initialGenre = null, initialYear = null }: DiscoverLayoutProps) {
   const router = useRouter();
   const activeSelection = initialSelection;
 
   // Filter States
   const [type, setType] = useState<"movie" | "tv">("movie");
-  const [genre, setGenre] = useState<string | number | null>(pageType === "category" ? initialSelection : null);
+  const [genre, setGenre] = useState<string | number | null>(pageType === "category" ? initialSelection : (initialGenre ?? null));
   const [language, setLanguage] = useState<string | null>(pageType === "language" ? String(initialSelection ?? "") || null : null);
-  const [year, setYear] = useState<string | null>(pageType === "year" ? String(initialSelection ?? "") || null : null);
+  const [year, setYear] = useState<string | null>(pageType === "year" ? String(initialSelection ?? "") || null : (initialYear ?? null));
   const [searchQuery, setSearchQuery] = useState("");
 
   type DiscoverOption = { id: string | number | null; name: string };
@@ -42,6 +44,7 @@ export default function DiscoverLayout({ pageType, title, initialSelection = nul
       case "category": return HOME_GENRES.filter(g => g.id !== null);
       case "language": return LANGUAGES;
       case "year": return YEARS.map(y => ({ id: y, name: String(y) }));
+      case "collection": return [];
     }
   };
 
@@ -138,7 +141,7 @@ export default function DiscoverLayout({ pageType, title, initialSelection = nul
             >
               <ChevronLeft />
             </button>
-            {getPrimaryLabel()}
+            {pageType === "collection" ? title : getPrimaryLabel()}
             <span className="text-xl text-brand font-body px-2 py-0.5 rounded-lg bg-brand/10 border border-brand/20 ml-2 shadow-sm">
               {type === "movie" ? "Movies" : "TV Shows"}
             </span>

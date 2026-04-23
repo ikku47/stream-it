@@ -4,6 +4,7 @@ import {
   getBreadcrumbJsonLd,
   getMediaDetails,
   getMovieJsonLd,
+  getVideoObjectJsonLd,
 } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
@@ -21,6 +22,7 @@ export default async function MoviePage({ params }) {
       { name: initialDetails?.title || "Movie", url: `/movie/${id}` },
     ]),
     getMovieJsonLd(initialDetails, `/movie/${id}`),
+    getVideoObjectJsonLd(initialDetails),
   ].filter(Boolean);
 
   return (

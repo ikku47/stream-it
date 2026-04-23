@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Play, Youtube, Tv, Film, Heart } from "lucide-react";
-import { img, imgFallback, scoreColor, getTitle, getYear, normalizeItem } from "../lib/tmdb";
+import { img, imgFallback, scoreColor, getTitle, getYear, normalizeItem, slugify, fetchWatchProviders } from "../lib/tmdb";
 import { useItemDetails, fetchTrailer } from "../hooks/useTMDB";
 import useStore from "../store/useStore";
 
@@ -20,6 +20,7 @@ export default function DetailScreen({ id, type, initialDetails = null }) {
   } = useStore();
 
   const [episodes, setEpisodes] = useState([]);
+  const [watchProviders, setWatchProviders] = useState({ link: null, flatrate: [] });
 
   // Use selectedMedia if available, else null
   const instantItem = (selectedMedia && id && selectedMedia.id?.toString() === id.toString()) ? selectedMedia : null;
@@ -34,6 +35,11 @@ export default function DetailScreen({ id, type, initialDetails = null }) {
     if (!tv) return;
     fetchSeasonEpisodes(selectedSeason).then(setEpisodes);
   }, [selectedSeason, id, tv, fetchSeasonEpisodes]);
+
+  useEffect(() => {
+    if (!id || !type) return;
+    fetchWatchProviders(id, type).then(setWatchProviders);
+  }, [id, type]);
 
   if (!item) {
     return (
@@ -53,6 +59,7 @@ export default function DetailScreen({ id, type, initialDetails = null }) {
   const backdrop = img(item.backdrop_path || details?.backdrop_path, "original") || imgFallback(item.poster_path || details?.poster_path);
   const seasons = details?.number_of_seasons || item.number_of_seasons || 1;
   const isFav = favourites.some(f => f.id === item.id);
+  const directors = details?.credits?.crew?.filter(c => c.job === "Director" || c.job === "Executive Producer" || c.job === "Creator").slice(0, 2) || [];
 
   const handleTrailer = async () => {
     try {
@@ -80,7 +87,7 @@ export default function DetailScreen({ id, type, initialDetails = null }) {
 
         <Image
           src={backdrop}
-          alt={`${title} cover art`}
+          alt={`${title} ${type === "tv" ? "series" : "movie"} backdrop`}
           fill
           priority
           sizes="100vw"
@@ -140,19 +147,36 @@ export default function DetailScreen({ id, type, initialDetails = null }) {
                 {details.number_of_episodes} episodes
               </span>
             )}
+            {directors.length > 0 && (
+              <div className="flex items-center gap-2 text-white/55 text-[13px]">
+                <span className="opacity-50">by</span>
+                {directors.map((d, i) => (
+                  <span key={d.name} className="flex items-center gap-1">
+                    <button 
+                      onClick={() => router.push(`/person/${d.id || d.name}`)}
+                      className="hover:text-[var(--color-brand)] transition-colors font-semibold"
+                    >
+                      {d.name}
+                    </button>
+                    {i < directors.length - 1 && <span className="opacity-30">•</span>}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Genre chips */}
           {genres.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-8">
               {genres.map((g) => (
-                <span
+                <button
                   key={g.id || g.name}
-                  className="px-3 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase"
+                  onClick={() => router.push(`/categories/${slugify(g.name)}`)}
+                  className="px-3 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-colors hover:bg-[var(--color-brand)] hover:text-white"
                   style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.08)" }}
                 >
                   {g.name}
-                </span>
+                </button>
               ))}
             </div>
           )}
@@ -189,6 +213,37 @@ export default function DetailScreen({ id, type, initialDetails = null }) {
           </div>
         </div>
 
+        {/* Streaming Availability (Where to Watch) */}
+        {watchProviders?.flatrate?.length > 0 && (
+          <div className="mb-16 animate-fade-in" style={{ animationDelay: "50ms", animationFillMode: "both" }}>
+            <h3 className="text-white text-xl lg:text-2xl font-display font-bold mb-6 tracking-wide flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[var(--color-brand)]" />
+              Where to Watch
+            </h3>
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex -space-x-3 hover:space-x-1 transition-all">
+                {watchProviders.flatrate.map((p) => (
+                  <div key={p.provider_id} className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-[var(--color-bg)] bg-white/5 shadow-xl transition-transform hover:scale-110 hover:z-10 group" title={p.provider_name}>
+                    <img src={img(p.logo_path, "w92")} alt={p.provider_name} className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+              <div className="ml-2">
+                <p className="text-sm font-bold text-white mb-0.5">Stream now on {watchProviders.flatrate[0].provider_name}{watchProviders.flatrate.length > 1 ? ` and ${watchProviders.flatrate.length - 1} more` : ""}</p>
+                <a 
+                  href={watchProviders.link || `https://www.google.com/search?q=watch+${encodeURIComponent(title)}+online`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-[var(--color-brand)] hover:underline font-semibold tracking-wide flex items-center gap-1 uppercase"
+                >
+                  View all options
+                  <ChevronLeft className="w-3 h-3 rotate-180" />
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Cast Section */}
         {details?.credits?.cast?.length > 0 && (
           <div className="mb-16 animate-fade-in" style={{ animationDelay: "100ms", animationFillMode: "both" }}>
@@ -201,7 +256,7 @@ export default function DetailScreen({ id, type, initialDetails = null }) {
                 >
                   <div className="w-[100px] h-[100px] lg:w-[120px] lg:h-[120px] mx-auto mb-4 rounded-full overflow-hidden bg-[var(--color-surface-3)] border-[3px] border-[var(--color-surface-2)] transition-transform group-hover:scale-105 group-hover:border-[var(--color-brand)]">
                     {c.profile_path ? (
-                      <img src={imgFallback(c.profile_path, "w185")} alt={c.name} className="w-full h-full object-cover" />
+                      <img src={imgFallback(c.profile_path, "w185")} alt={`${c.name} - ${title} cast`} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-xs text-white/30 font-medium">N/A</div>
                     )}
@@ -299,7 +354,7 @@ export default function DetailScreen({ id, type, initialDetails = null }) {
                   router.push(`/${type}/${s.id}`);
                 }} className="flex-shrink-0 w-[140px] lg:w-[160px] cursor-pointer group">
                   <div className="w-full aspect-[2/3] rounded-2xl overflow-hidden mb-3 relative shadow-lg">
-                    <img src={img(s.poster_path || s.backdrop_path, "w342")} alt={`${getTitle(s)} poster`} title={getTitle(s)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={img(s.poster_path || s.backdrop_path, "w342")} alt={`${getTitle(s)} movie poster`} title={getTitle(s)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
                   </div>
                   <p className="text-sm lg:text-[15px] text-white font-bold leading-tight line-clamp-2 group-hover:text-[var(--color-brand)] transition-colors">{getTitle(s)}</p>
