@@ -104,18 +104,18 @@ async function getCollectionEntries(): Promise<SitemapEntry[]> {
 
 export function generateSitemaps() {
   return [
-    { id: "base" },
-    { id: "movies" },
-    { id: "tv" },
-    { id: "people" },
+    { id: 0 }, // base
+    { id: 1 }, // movies
+    { id: 2 }, // tv
+    { id: 3 }, // people
   ];
 }
 
-export default async function sitemap({ id }: { id: string }): Promise<MetadataRoute.Sitemap> {
+export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
 
   switch (id) {
-    case "movies": {
+    case 1: {
       const data = await tmdb("/movie/popular", { page: 1 });
       const movies = (data.results || []).map((m: any) => ({
         url: getSiteUrl(`/movie/${m.id}`),
@@ -126,7 +126,7 @@ export default async function sitemap({ id }: { id: string }): Promise<MetadataR
       return movies;
     }
 
-    case "tv": {
+    case 2: {
       const data = await tmdb("/tv/popular", { page: 1 });
       const series = (data.results || []).map((t: any) => ({
         url: getSiteUrl(`/tv/${t.id}`),
@@ -137,7 +137,7 @@ export default async function sitemap({ id }: { id: string }): Promise<MetadataR
       return series;
     }
 
-    case "people": {
+    case 3: {
       const personEntries = await getTrendingPersonEntries();
       return toAbsoluteSitemap(personEntries);
     }
