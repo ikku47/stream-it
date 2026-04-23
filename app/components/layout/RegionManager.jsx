@@ -11,11 +11,11 @@ export default function RegionManager() {
       if (region) return;
 
       try {
-        const res = await fetch("http://ip-api.com/json");
+        const res = await fetch("https://ipapi.co/json/");
         const data = await res.json();
-        if (data && data.countryCode) {
-          console.log("Region detected:", data.countryCode);
-          setRegion(data.countryCode);
+        if (data && data.country_code) {
+          console.log("Region detected:", data.country_code);
+          setRegion(data.country_code);
         }
       } catch (err) {
         console.error("Failed to fetch region:", err);
