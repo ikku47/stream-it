@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Play, Youtube, Tv, Film, Heart } from "lucide-react";
+import { Play, Youtube, Tv, Film, Heart,ChevronLeft } from "lucide-react";
 import { img, imgFallback, scoreColor, getTitle, getYear, normalizeItem, slugify, fetchWatchProviders } from "../lib/tmdb";
 import { useItemDetails, fetchTrailer } from "../hooks/useTMDB";
 import useStore from "../store/useStore";
