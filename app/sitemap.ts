@@ -102,38 +102,78 @@ async function getCollectionEntries(): Promise<SitemapEntry[]> {
   return entries;
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const categoryEntries: SitemapEntry[] = HOME_GENRES.filter((genre) => genre.id !== null).map((genre) => ({
-    url: `/categories/${slugify(genre.name)}`,
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
+export function generateSitemaps() {
+  return [
+    { id: "base" },
+    { id: "movies" },
+    { id: "tv" },
+    { id: "people" },
+  ];
+}
 
-  const languageEntries: SitemapEntry[] = LANGUAGES.map((language) => ({
-    url: `/languages/${String(language.id).toLowerCase()}`,
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
+export default async function sitemap({ id }: { id: string }): Promise<MetadataRoute.Sitemap> {
+  const lastModified = new Date();
 
-  const yearEntries: SitemapEntry[] = YEARS.map((year) => ({
-    url: `/years/${year}`,
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
+  switch (id) {
+    case "movies": {
+      const data = await tmdb("/movie/popular", { page: 1 });
+      const movies = (data.results || []).map((m: any) => ({
+        url: getSiteUrl(`/movie/${m.id}`),
+        lastModified,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }));
+      return movies;
+    }
 
-  const [detailEntries, personEntries, collectionEntries] = await Promise.all([
-    getHomeDetailEntries(),
-    getTrendingPersonEntries(),
-    getCollectionEntries(),
-  ]);
+    case "tv": {
+      const data = await tmdb("/tv/popular", { page: 1 });
+      const series = (data.results || []).map((t: any) => ({
+        url: getSiteUrl(`/tv/${t.id}`),
+        lastModified,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }));
+      return series;
+    }
 
-  return toAbsoluteSitemap([
-    ...baseEntries,
-    ...categoryEntries,
-    ...languageEntries,
-    ...yearEntries,
-    ...detailEntries,
-    ...personEntries,
-    ...collectionEntries,
-  ]);
+    case "people": {
+      const personEntries = await getTrendingPersonEntries();
+      return toAbsoluteSitemap(personEntries);
+    }
+
+    default: {
+      const categoryEntries: SitemapEntry[] = HOME_GENRES.filter((genre) => genre.id !== null).map((genre) => ({
+        url: `/categories/${slugify(genre.name)}`,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }));
+
+      const languageEntries: SitemapEntry[] = LANGUAGES.map((language) => ({
+        url: `/languages/${String(language.id).toLowerCase()}`,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }));
+
+      const yearEntries: SitemapEntry[] = YEARS.map((year) => ({
+        url: `/years/${year}`,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      }));
+
+      const [detailEntries, collectionEntries] = await Promise.all([
+        getHomeDetailEntries(),
+        getCollectionEntries(),
+      ]);
+
+      return toAbsoluteSitemap([
+        ...baseEntries,
+        ...categoryEntries,
+        ...languageEntries,
+        ...yearEntries,
+        ...detailEntries,
+        ...collectionEntries,
+      ]);
+    }
+  }
 }
